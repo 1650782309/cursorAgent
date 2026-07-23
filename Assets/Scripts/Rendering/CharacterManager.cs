@@ -15,7 +15,15 @@ namespace DesktopCompanion.Rendering
     {
         [SerializeField] private Camera _camera;
 
+        [Tooltip("对话气泡锚点相对角色根节点的高度（米），VRM 约 1.6 接近头顶")]
+        [SerializeField] private float _bubbleHeight = 1.6f;
+
         public ICharacterRenderer Active { get; private set; }
+
+        public Camera Camera => _camera;
+
+        /// <summary>对话气泡的世界坐标锚点（角色头顶附近）。</summary>
+        public Vector3 BubbleAnchorWorld => transform.position + Vector3.up * _bubbleHeight;
 
         private void Awake()
         {
