@@ -79,8 +79,11 @@ AI 对话逻辑与角色渲染彻底解耦，**2D（Spine）与 3D（VRM）通�
 3. 新建空物体 `App`，挂 `AppBootstrap`（`Assets/Scripts/App`），
    把 `Character` 拖到 `Character` 字段，设置默认 `Kind`/`ResourcePath`。
 4. 新建空物体 `UI`，挂 `ChatDebugUI`，把 `App` 拖上去（开箱即用的调试对话框）。
-5. （启用透明窗口时）把 UniWindowController 的 Prefab 拖进场景，
-   并在某物体上挂 `DesktopWindowManager` + `ClickThroughController`，关联 `CharacterManager`。
+5. （启用语音时）在 `Character` 或单独物体上挂 `VoicePlayer` + `LipSyncDriver`，
+   并把 `VoicePlayer` 拖到 `AppBootstrap` 的 `Voice` 字段。
+6. （启用透明窗口时）把 UniWindowController 的 Prefab 拖进场景，
+   并在某物体上挂 `DesktopWindowManager` + `ClickThroughController` + `CharacterDragHandler`，
+   关联 `CharacterManager`。
 
 ---
 
@@ -92,6 +95,8 @@ AI 对话逻辑与角色渲染彻底解耦，**2D（Spine）与 3D（VRM）通�
   填入 `apiKey`。**建议把带真实 key 的文件另存为 `model_config.local.json`**
   （已在 `.gitignore` 忽略，避免泄露）。
 - `persona.json`：角色名字、性格与情绪标注规则。
+- `tts_config.json`：语音合成。`enabled=true` 开启，填 `baseUrl`/`apiKey`/`model`/`voice`。
+  默认走 OpenAI 兼容的 `/audio/speech`（示例为千问 TTS）。真实 key 建议另存 `tts_config.local.json`。
 
 模型接入说明：
 - **DeepSeek**：`https://api.deepseek.com/v1`，`model=deepseek-chat`。
@@ -111,26 +116,47 @@ AI 对话逻辑与角色渲染彻底解耦，**2D（Spine）与 3D（VRM）通�
 
 ---
 
+## 语音与口型同步
+
+- `AppBootstrap` 在回复完成后调用 `ITextToSpeech` 合成音频，交给 `VoicePlayer` 播放。
+- `LipSyncDriver` 读取正在播放的音频波形（RMS 响度），平滑后驱动角色 `SetViseme("aa", w)`
+  张嘴，VRM 映射到标准 viseme。这是"音量驱动"方案，简单鲁棒、跨模型通用。
+- 需要更精细的元音口型时，可在 `LipSyncDriver` 中接入音素/对齐分析。
+
+---
+
+## 长期记忆
+
+- `MemoryStore` 同时保存「最近原文」+「长期摘要」，落盘为 `persistentDataPath/memory.json`。
+- 短期原文超过阈值时，`DialogueManager` 异步调用 `MemorySummarizer`，用 LLM 把最旧的一批
+  对话压缩进摘要，摘要作为 system 上下文注入，实现"记得久但不撑爆上下文"。
+- 后续可把摘要式记忆升级为 sqlite + 向量语义检索，接口不变。
+
+---
+
 ## 目录结构
 
 ```
 Assets/Scripts/
   Core/        Emotion, CharacterAsset, ICharacterRenderer, MainThreadDispatcher
   Rendering/   CharacterManager, SpineCharacterRenderer, VrmCharacterRenderer
-  AI/          ChatMessage, LLMConfig, ILLMProvider, OpenAICompatibleProvider, LLMManager
-  Brain/       PersonaConfig, EmotionParser, MemoryStore, DialogueManager
-  Window/      DesktopWindowManager, ClickThroughController
+  AI/          ChatMessage, LLMConfig, ILLMProvider, OpenAICompatibleProvider, LLMManager, LLMExtensions
+  Brain/       PersonaConfig, EmotionParser, MemoryStore, MemorySummarizer, DialogueManager
+  Voice/       ITextToSpeech, TTSConfig, OpenAICompatibleTTS, TTSManager, VoicePlayer, LipSyncDriver
+  Window/      DesktopWindowManager, ClickThroughController, CharacterDragHandler
   App/         AppBootstrap, PersonaLoader
   UI/          ChatDebugUI
-Assets/StreamingAssets/Config/   model_config.json, persona.json
+Assets/StreamingAssets/Config/   model_config.json, persona.json, tts_config.json
 ```
 
 ---
 
 ## 后续路线（Roadmap）
 
-- [ ] 语音：ASR（sherpa-onnx / whisper）+ TTS（edge-tts / GPT-SoVITS），TTS 音频驱动 VRM viseme 口型
-- [ ] 长期记忆：sqlite + 向量检索（当前为 JSON 短期记忆）
+- [x] 语音输出：TTS（OpenAI 兼容 /audio/speech）+ 音量驱动 VRM viseme 口型
+- [x] 长期记忆：LLM 摘要压缩（后续可升级 sqlite + 向量检索）
+- [x] 桌宠交互：拖动移动窗口
+- [ ] 语音输入：ASR（sherpa-onnx / whisper）语音对话
 - [ ] 美观对话气泡（uGUI / TextMeshPro 替换 IMGUI 调试框）
 - [ ] 多角色管理与形态切换 UI
 - [ ] 系统托盘、开机自启、拖动与右键菜单

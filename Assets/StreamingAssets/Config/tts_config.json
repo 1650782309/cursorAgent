@@ -1,0 +1,8 @@
+{
+  "enabled": false,
+  "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "apiKey": "",
+  "model": "qwen-tts",
+  "voice": "Chelsie",
+  "format": "wav"
+}
