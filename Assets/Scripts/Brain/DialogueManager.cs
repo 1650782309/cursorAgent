@@ -19,8 +19,14 @@ namespace DesktopCompanion.Brain
         private readonly ILLMProvider _provider;
         private readonly PersonaConfig _persona;
         private readonly MemoryStore _memory;
+        private readonly MemorySummarizer _summarizer;
+
+        // 短期原文超过该条数时，把最旧的一批折叠进长期摘要。
+        private const int SummarizeThreshold = 24;
+        private const int KeepRecent = 12;
 
         private CancellationTokenSource _cts;
+        private bool _summarizing;
 
         /// <summary>流式增量：参数为「去掉情绪标签后的当前完整正文」。</summary>
         public event Action<string> OnPartialReply;
@@ -33,11 +39,13 @@ namespace DesktopCompanion.Brain
 
         public event Action<string> OnError;
 
-        public DialogueManager(ILLMProvider provider, PersonaConfig persona, MemoryStore memory)
+        public DialogueManager(ILLMProvider provider, PersonaConfig persona, MemoryStore memory,
+            MemorySummarizer summarizer = null)
         {
             _provider = provider;
             _persona = persona;
             _memory = memory;
+            _summarizer = summarizer;
         }
 
         public void CancelOngoing()
@@ -98,7 +106,39 @@ namespace DesktopCompanion.Brain
                 _memory.Add(new ChatMessage(Role.Assistant, raw));
 
                 OnCompleteReply?.Invoke(emotion, clean);
+
+                MaybeSummarize();
             });
+        }
+
+        // 当短期原文过长时，异步把最旧的一批折叠进长期摘要（不阻塞对话）。
+        private void MaybeSummarize()
+        {
+            if (_summarizer == null || _summarizing) return;
+            if (_memory.History.Count <= SummarizeThreshold) return;
+
+            _summarizing = true;
+            string existing = _memory.Summary;
+            var older = _memory.TakeOldest(_memory.History.Count - KeepRecent);
+
+            _ = SummarizeAsync(existing, older);
+        }
+
+        private async Task SummarizeAsync(string existing, List<ChatMessage> older)
+        {
+            try
+            {
+                string summary = await _summarizer.SummarizeAsync(existing, older);
+                MainThreadDispatcher.Instance.Enqueue(() => _memory.SetSummary(summary));
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[DialogueManager] 记忆摘要失败: {e.Message}");
+            }
+            finally
+            {
+                _summarizing = false;
+            }
         }
 
         private List<ChatMessage> BuildMessages(string userInput)
@@ -107,6 +147,10 @@ namespace DesktopCompanion.Brain
             {
                 new ChatMessage(Role.System, _persona.BuildSystemPrompt())
             };
+
+            if (!string.IsNullOrEmpty(_memory.Summary))
+                list.Add(new ChatMessage(Role.System, "关于用户的长期记忆摘要：\n" + _memory.Summary));
+
             list.AddRange(_memory.History);
             list.Add(new ChatMessage(Role.User, userInput));
             return list;

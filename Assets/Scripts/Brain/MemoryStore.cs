@@ -7,38 +7,69 @@ using DesktopCompanion.AI;
 namespace DesktopCompanion.Brain
 {
     /// <summary>
-    /// 简单对话记忆：短期上下文（内存）+ 落盘持久化（JSON）。
-    /// 说明：进阶的长期记忆（向量检索/摘要）建议后续接入 sqlite + 向量库，
-    /// 这里先用轻量实现保证工程可跑、无原生依赖。
+    /// 对话记忆：短期上下文（最近若干条原文）+ 长期摘要（旧对话被 LLM 压缩成 summary）。
+    /// 落盘持久化为 JSON。
+    ///
+    /// 说明：这是无原生依赖的轻量实现。若需语义检索式长期记忆，
+    /// 后续可接入 sqlite + 向量库，接口保持不变。
     /// </summary>
     public class MemoryStore
     {
-        private readonly int _maxTurns;
-        private readonly string _path;
-        private readonly List<ChatMessage> _history = new List<ChatMessage>();
-
-        public MemoryStore(int maxTurns = 20)
+        private class MemoryData
         {
-            _maxTurns = maxTurns;
+            public string summary = "";
+            public List<ChatMessage> history = new List<ChatMessage>();
+        }
+
+        private readonly int _hardCap;
+        private readonly string _path;
+        private readonly MemoryData _data = new MemoryData();
+
+        /// <param name="hardCap">短期原文最多保留的条数（超出时最旧的被丢弃或转入摘要）。</param>
+        public MemoryStore(int hardCap = 40)
+        {
+            _hardCap = hardCap;
             _path = Path.Combine(Application.persistentDataPath, "memory.json");
             Load();
         }
 
-        public IReadOnlyList<ChatMessage> History => _history;
+        public IReadOnlyList<ChatMessage> History => _data.history;
+
+        public string Summary => _data.summary;
+
+        public void SetSummary(string summary)
+        {
+            _data.summary = summary ?? "";
+            Save();
+        }
 
         public void Add(ChatMessage message)
         {
-            _history.Add(message);
-            // 仅保留最近 N 轮（user+assistant 视为 2 条）。
-            int max = _maxTurns * 2;
-            if (_history.Count > max)
-                _history.RemoveRange(0, _history.Count - max);
+            _data.history.Add(message);
+            if (_data.history.Count > _hardCap)
+                _data.history.RemoveRange(0, _data.history.Count - _hardCap);
             Save();
+        }
+
+        /// <summary>
+        /// 取出并移除最旧的 <paramref name="count"/> 条（供摘要器压缩）。
+        /// count &lt;= 0 或超过现有数量时做安全裁剪。
+        /// </summary>
+        public List<ChatMessage> TakeOldest(int count)
+        {
+            count = Mathf.Clamp(count, 0, _data.history.Count);
+            if (count == 0) return new List<ChatMessage>();
+
+            var taken = _data.history.GetRange(0, count);
+            _data.history.RemoveRange(0, count);
+            Save();
+            return taken;
         }
 
         public void Clear()
         {
-            _history.Clear();
+            _data.history.Clear();
+            _data.summary = "";
             Save();
         }
 
@@ -47,8 +78,12 @@ namespace DesktopCompanion.Brain
             if (!File.Exists(_path)) return;
             try
             {
-                var loaded = JsonConvert.DeserializeObject<List<ChatMessage>>(File.ReadAllText(_path));
-                if (loaded != null) _history.AddRange(loaded);
+                var loaded = JsonConvert.DeserializeObject<MemoryData>(File.ReadAllText(_path));
+                if (loaded != null)
+                {
+                    _data.summary = loaded.summary ?? "";
+                    _data.history = loaded.history ?? new List<ChatMessage>();
+                }
             }
             catch (System.Exception e)
             {
@@ -60,7 +95,7 @@ namespace DesktopCompanion.Brain
         {
             try
             {
-                File.WriteAllText(_path, JsonConvert.SerializeObject(_history));
+                File.WriteAllText(_path, JsonConvert.SerializeObject(_data));
             }
             catch (System.Exception e)
             {
