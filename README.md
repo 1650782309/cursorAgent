@@ -1,1 +1,193 @@
-# cursorAgent
+# Desktop AI Companion (Unity)
+
+一个桌面 AI 虚拟人物陪伴软件的 **Unity 起步工程**。采用「大脑 / 身体」分离架构：
+AI 对话逻辑与角色渲染彻底解耦，**2D（Spine）与 3D（VRM）通过统一抽象层可插拔**，
+在线模型（千问 / DeepSeek）与本地模型（Ollama）走同一套 OpenAI 兼容接口。
+
+> **给 Agent 读的项目上下文**：见仓库根目录 [`AGENT_CONTEXT.md`](AGENT_CONTEXT.md)（技术选型、进度、踩坑、本地拉取方式）。
+
+> ⚠️ 本仓库是**脚手架**：提供完整的工程结构、C# 脚本、配置模板与装配方式。
+> 由于 Spine / VRM / 透明窗口依赖第三方包，需按下文安装并开启对应编译宏后才是完整功能。
+> 未安装这些包时工程**仍可编译运行**（使用占位实现），可先跑通 AI 对话链路。
+
+---
+
+## 架构总览
+
+```
+┌──────────────── 大脑 Brain (Assets/Scripts/Brain, AI) ────────────────┐
+│  PersonaConfig 人设 · MemoryStore 记忆 · DialogueManager 对话编排       │
+│  EmotionParser 情绪解析                                                │
+│  LLMManager → OpenAICompatibleProvider（千问 / DeepSeek / Ollama 统一） │
+└───────────────────────────────┬──────────────────────────────────────┘
+                                 │ 事件：OnEmotion / OnPartialReply / OnComplete
+┌───────────────────────────────▼──────────────────────────────────────┐
+│  身体 Body (Assets/Scripts/Rendering)                                  │
+│  CharacterManager → ICharacterRenderer                                │
+│      ├─ SpineCharacterRenderer  (2D, spine-unity)                     │
+│      └─ VrmCharacterRenderer    (3D, UniVRM)                          │
+├───────────────────────────────────────────────────────────────────────┤
+│  窗口 Window (Assets/Scripts/Window)                                   │
+│  DesktopWindowManager + ClickThroughController (UniWindowController)   │
+│  透明 / 置顶 / 点击穿透（只有人物区域可点，其余穿透到桌面）              │
+└───────────────────────────────────────────────────────────────────────┘
+```
+
+**为什么这样分层**：未来若要新增角色形态、换 2D/3D、甚至替换渲染方案，
+只需实现 `ICharacterRenderer`，大脑层（AI/人设/记忆/情绪）完全不动。
+
+---
+
+## 环境要求
+
+- Unity **6 LTS（推荐 6000.3.20f1，或 6000.x 任一最新补丁）**（用其它版本打开会提示升级，脚本本身兼容）
+- 目标平台：Windows / macOS 桌面
+
+---
+
+## 安装步骤
+
+### 1. 打开工程
+用 Unity Hub 添加本仓库根目录作为工程并打开。首次会自动拉取 `Packages/manifest.json`
+里的依赖（含 **Newtonsoft Json**，脚本 JSON 解析依赖它）。
+
+### 2. 安装第三方渲染/窗口包（按需）
+
+| 功能 | 包 | 安装方式 | 编译宏 |
+|------|----|---------|--------|
+| 3D 角色 | **UniVRM** | Package Manager → Add package from git URL：<br>`https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM10#v0.128.0` | `UNIVRM_PRESENT` |
+| 2D 角色 | **spine-unity** | 从 Esoteric 官网下载对应 Unity 版本的 `.unitypackage` 导入（需 Spine 授权） | `SPINE_UNITY` |
+| 透明窗口 | **UniWindowController** | 从 GitHub `kirurobo/UniWindowController` 下载 `.unitypackage` 导入 | `UNIWINDOW_PRESENT` |
+
+> 版本号以各仓库最新 Release 为准，上面仅示例。
+
+### 3. 开启编译宏
+`Edit → Project Settings → Player → Other Settings → Scripting Define Symbols`，
+按已安装的包添加：`UNIVRM_PRESENT;SPINE_UNITY;UNIWINDOW_PRESENT`（只加装了的）。
+未添加时对应后端走占位实现，不影响编译。
+
+### 4. Windows 透明窗口设置
+`Player Settings`：
+- Resolution and Presentation → Fullscreen Mode 设为 **Windowed**
+- Rendering → 取消勾选 **Use DXGI Flip Model Swapchain**（透明必需）
+
+---
+
+## 场景装配
+
+1. 新建场景，保留一个 `Main Camera`。
+2. 新建空物体 `Character`，挂 `CharacterManager`（`Assets/Scripts/Rendering`），
+   把相机拖到其 `Camera` 字段。
+3. 新建空物体 `App`，挂 `AppBootstrap`（`Assets/Scripts/App`），
+   把 `Character` 拖到 `Character` 字段，设置默认 `Kind`/`ResourcePath`。
+4. 新建空物体 `UI`，挂 `ChatUI`（推荐，运行时自建头顶气泡 + 底部输入栏，
+   会自动找到 `App`/`Character`/`VoiceInput`）。若只想要极简调试框，可改挂 `ChatDebugUI`。
+5. （启用语音输出时）在 `Character` 或单独物体上挂 `VoicePlayer` + `LipSyncDriver`，
+   并把 `VoicePlayer` 拖到 `AppBootstrap` 的 `Voice` 字段。
+6. （启用语音输入时）挂 `MicrophoneRecorder` + `VoiceInputController`，
+   `VoiceInputController` 会自动找到 `AppBootstrap` 与录音器；默认按住 **Left Alt** 说话。
+7. （启用透明窗口时）把 UniWindowController 的 Prefab 拖进场景，
+   并在某物体上挂 `DesktopWindowManager` + `ClickThroughController` + `CharacterDragHandler`，
+   关联 `CharacterManager`。
+
+---
+
+## 配置模型与人设
+
+编辑 `Assets/StreamingAssets/Config/`：
+
+- `model_config.json`：内置 `deepseek` / `qwen` / `ollama` 三个供应商，改 `active` 切换，
+  填入 `apiKey`。**建议把带真实 key 的文件另存为 `model_config.local.json`**
+  （已在 `.gitignore` 忽略，避免泄露）。
+- `persona.json`：角色名字、性格与情绪标注规则。
+- `tts_config.json`：语音合成。`enabled=true` 开启，填 `baseUrl`/`apiKey`/`model`/`voice`。
+  默认走 OpenAI 兼容的 `/audio/speech`（示例为千问 TTS）。真实 key 建议另存 `tts_config.local.json`。
+- `asr_config.json`：语音识别。`enabled=true` 开启，走 OpenAI 兼容的 `/audio/transcriptions`
+  （示例为 Whisper）。`pushToTalkKey` 设置按住说话的按键，真实 key 建议另存 `asr_config.local.json`。
+
+模型接入说明：
+- **DeepSeek**：`https://api.deepseek.com/v1`，`model=deepseek-chat`。
+- **千问（DashScope 兼容模式）**：`https://dashscope.aliyuncs.com/compatible-mode/v1`，`model=qwen-plus` 等。
+- **本地 Ollama**：先 `ollama run qwen2.5`，地址 `http://localhost:11434/v1`。
+
+三者都是 OpenAI 兼容接口，由 `OpenAICompatibleProvider` 一份代码统一处理流式输出。
+
+---
+
+## 情绪 → 表情联动
+
+人设会要求模型在回复前输出 `[emotion:happy]` 这样的标签，`EmotionParser` 解析后：
+- 通过 `DialogueManager.OnEmotion` 事件驱动 `CharacterManager.SetExpression`；
+- VRM 映射到标准表情预设，Spine 映射到情绪动画；
+- 展示给用户的正文会自动去掉该标签。
+
+---
+
+## 语音闭环（能听能说）
+
+**语音输出（TTS）+ 口型同步**
+- `AppBootstrap` 在回复完成后调用 `ITextToSpeech` 合成音频，交给 `VoicePlayer` 播放。
+- `LipSyncDriver` 读取正在播放的音频波形（RMS 响度），平滑后驱动角色 `SetViseme("aa", w)`
+  张嘴，VRM 映射到标准 viseme。这是"音量驱动"方案，简单鲁棒、跨模型通用。
+- 需要更精细的元音口型时，可在 `LipSyncDriver` 中接入音素/对齐分析。
+
+**语音输入（ASR）**
+- `VoiceInputController` 按住说话：`MicrophoneRecorder` 用 Unity `Microphone` 录音，
+  `WavUtility` 编码成 16-bit WAV，`OpenAICompatibleSTT` 走 `/audio/transcriptions` 转写，
+  结果自动送入 `DialogueManager.Send`。配合 TTS 即"听到→思考→说出"完整闭环。
+- 默认按住 `LeftAlt` 录音、松开转写，可在 `asr_config.json` 改键位。
+- 本地化：`baseUrl` 指向自建 whisper.cpp / faster-whisper 的 OpenAI 兼容服务即可离线识别。
+
+---
+
+## 长期记忆
+
+- `MemoryStore` 同时保存「最近原文」+「长期摘要」，落盘为 `persistentDataPath/memory.json`。
+- 短期原文超过阈值时，`DialogueManager` 异步调用 `MemorySummarizer`，用 LLM 把最旧的一批
+  对话压缩进摘要，摘要作为 system 上下文注入，实现"记得久但不撑爆上下文"。
+- 后续可把摘要式记忆升级为 sqlite + 向量语义检索，接口不变。
+
+---
+
+## 对话界面（ChatUI）
+
+- `ChatUI` 在运行时用代码构建 uGUI（自动创建 Canvas / EventSystem / 动态中文字体），
+  **无需在编辑器手动搭界面**：
+  - 角色**头顶气泡**：跟随 `CharacterManager.BubbleAnchorWorld`（可调高度），流式显示回复，
+    静默数秒后自动淡出，角色转到相机背后时隐藏；
+  - **底部输入栏**：输入框 + 发送按钮，回车或点击发送；
+  - 语音转写结果以“你说：…”临时显示。
+- 字体通过 `UiFactory` 用 `Font.CreateDynamicFontFromOSFont` 加载系统 CJK 字体（雅黑/苹方等），
+  避免依赖 TMP Essentials 导入。生产可替换为美术定制的预制体气泡。
+
+---
+
+## 目录结构
+
+```
+Assets/Scripts/
+  Core/        Emotion, CharacterAsset, ICharacterRenderer, MainThreadDispatcher
+  Rendering/   CharacterManager, SpineCharacterRenderer, VrmCharacterRenderer
+  AI/          ChatMessage, LLMConfig, ILLMProvider, OpenAICompatibleProvider, LLMManager, LLMExtensions
+  Brain/       PersonaConfig, EmotionParser, MemoryStore, MemorySummarizer, DialogueManager
+  Voice/       ITextToSpeech, TTSConfig, OpenAICompatibleTTS, TTSManager, VoicePlayer, LipSyncDriver,
+               ISpeechToText, ASRConfig, OpenAICompatibleSTT, ASRManager, WavUtility,
+               MicrophoneRecorder, VoiceInputController
+  Window/      DesktopWindowManager, ClickThroughController, CharacterDragHandler
+  App/         AppBootstrap, PersonaLoader
+  UI/          ChatUI（uGUI 头顶气泡+输入栏）, UiFactory, ChatDebugUI（IMGUI 备用）
+Assets/StreamingAssets/Config/   model_config.json, persona.json, tts_config.json, asr_config.json
+```
+
+---
+
+## 后续路线（Roadmap）
+
+- [x] 语音输出：TTS（OpenAI 兼容 /audio/speech）+ 音量驱动 VRM viseme 口型
+- [x] 语音输入：ASR（OpenAI 兼容 /audio/transcriptions，按住说话）
+- [x] 长期记忆：LLM 摘要压缩（后续可升级 sqlite + 向量检索）
+- [x] 桌宠交互：拖动移动窗口
+- [x] 对话气泡 UI：uGUI 运行时自建（头顶气泡 + 底部输入栏 + 流式显示 + 自动淡出）
+- [ ] 多角色管理与形态切换 UI
+- [ ] 系统托盘、开机自启、拖动与右键菜单
+- [ ] 动作系统：把 Mixamo/自制动画接到 VRM Animator，情绪→动作状态机

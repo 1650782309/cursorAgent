@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "com.unity.textmeshpro": "3.0.9",
+    "com.unity.ugui": "1.0.0",
+    "com.unity.modules.imgui": "1.0.0",
+    "com.unity.modules.jsonserialize": "1.0.0",
+    "com.unity.modules.physics": "1.0.0",
+    "com.unity.modules.uielements": "1.0.0",
+    "com.unity.modules.unitywebrequest": "1.0.0",
+    "com.unity.modules.unitywebrequestaudio": "1.0.0"
+  },
+  "comment": "spine-unity / UniVRM / UniWindowController 不在默认注册表，需按 README 手动安装后再在 Player Settings 里打开对应 Scripting Define Symbols。"
+}
