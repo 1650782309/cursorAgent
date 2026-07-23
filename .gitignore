@@ -44,3 +44,4 @@ Thumbs.db
 # ---- Local secrets (do NOT commit real API keys) ----
 Assets/StreamingAssets/Config/model_config.local.json
 Assets/StreamingAssets/Config/tts_config.local.json
+Assets/StreamingAssets/Config/asr_config.local.json

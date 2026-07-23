@@ -1,0 +1,9 @@
+{
+  "enabled": false,
+  "baseUrl": "https://api.openai.com/v1",
+  "apiKey": "",
+  "model": "whisper-1",
+  "language": "zh",
+  "sampleRate": 16000,
+  "pushToTalkKey": "LeftAlt"
+}

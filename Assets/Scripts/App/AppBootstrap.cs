@@ -33,6 +33,9 @@ namespace DesktopCompanion.App
         /// <summary>大脑对外入口，供 UI 调用。</summary>
         public DialogueManager Dialogue { get; private set; }
 
+        /// <summary>语音识别入口，供 VoiceInputController 使用（未启用时为 null）。</summary>
+        public ISpeechToText STT { get; private set; }
+
         private ITextToSpeech _tts;
         private TTSConfig _ttsConfig;
         private CancellationTokenSource _speakCts;
@@ -52,13 +55,23 @@ namespace DesktopCompanion.App
 
             Debug.Log($"[AppBootstrap] 使用模型供应商: {provider.Name}");
 
-            // ---- 组装语音（可选）----
+            // ---- 组装语音输出（TTS，可选）----
             _ttsConfig = TTSManager.LoadConfig();
             if (_ttsConfig.enabled)
             {
                 _tts = TTSManager.CreateProvider(_ttsConfig);
                 if (_voice == null) _voice = FindObjectOfType<VoicePlayer>();
                 Debug.Log("[AppBootstrap] TTS 已启用");
+            }
+
+            // ---- 组装语音输入（ASR，可选）----
+            var asrConfig = ASRManager.LoadConfig();
+            if (asrConfig.enabled)
+            {
+                STT = ASRManager.CreateProvider(asrConfig);
+                var voiceInput = FindObjectOfType<VoiceInputController>();
+                voiceInput?.Configure(asrConfig.pushToTalkKey, asrConfig.sampleRate);
+                Debug.Log($"[AppBootstrap] ASR 已启用（按住 {asrConfig.pushToTalkKey} 说话）");
             }
 
             // ---- 加载身体 ----
