@@ -78,7 +78,8 @@ AI 对话逻辑与角色渲染彻底解耦，**2D（Spine）与 3D（VRM）通�
    把相机拖到其 `Camera` 字段。
 3. 新建空物体 `App`，挂 `AppBootstrap`（`Assets/Scripts/App`），
    把 `Character` 拖到 `Character` 字段，设置默认 `Kind`/`ResourcePath`。
-4. 新建空物体 `UI`，挂 `ChatDebugUI`，把 `App` 拖上去（开箱即用的调试对话框）。
+4. 新建空物体 `UI`，挂 `ChatUI`（推荐，运行时自建头顶气泡 + 底部输入栏，
+   会自动找到 `App`/`Character`/`VoiceInput`）。若只想要极简调试框，可改挂 `ChatDebugUI`。
 5. （启用语音输出时）在 `Character` 或单独物体上挂 `VoicePlayer` + `LipSyncDriver`，
    并把 `VoicePlayer` 拖到 `AppBootstrap` 的 `Voice` 字段。
 6. （启用语音输入时）挂 `MicrophoneRecorder` + `VoiceInputController`，
@@ -146,6 +147,19 @@ AI 对话逻辑与角色渲染彻底解耦，**2D（Spine）与 3D（VRM）通�
 
 ---
 
+## 对话界面（ChatUI）
+
+- `ChatUI` 在运行时用代码构建 uGUI（自动创建 Canvas / EventSystem / 动态中文字体），
+  **无需在编辑器手动搭界面**：
+  - 角色**头顶气泡**：跟随 `CharacterManager.BubbleAnchorWorld`（可调高度），流式显示回复，
+    静默数秒后自动淡出，角色转到相机背后时隐藏；
+  - **底部输入栏**：输入框 + 发送按钮，回车或点击发送；
+  - 语音转写结果以“你说：…”临时显示。
+- 字体通过 `UiFactory` 用 `Font.CreateDynamicFontFromOSFont` 加载系统 CJK 字体（雅黑/苹方等），
+  避免依赖 TMP Essentials 导入。生产可替换为美术定制的预制体气泡。
+
+---
+
 ## 目录结构
 
 ```
@@ -159,7 +173,7 @@ Assets/Scripts/
                MicrophoneRecorder, VoiceInputController
   Window/      DesktopWindowManager, ClickThroughController, CharacterDragHandler
   App/         AppBootstrap, PersonaLoader
-  UI/          ChatDebugUI
+  UI/          ChatUI（uGUI 头顶气泡+输入栏）, UiFactory, ChatDebugUI（IMGUI 备用）
 Assets/StreamingAssets/Config/   model_config.json, persona.json, tts_config.json, asr_config.json
 ```
 
@@ -171,7 +185,7 @@ Assets/StreamingAssets/Config/   model_config.json, persona.json, tts_config.jso
 - [x] 语音输入：ASR（OpenAI 兼容 /audio/transcriptions，按住说话）
 - [x] 长期记忆：LLM 摘要压缩（后续可升级 sqlite + 向量检索）
 - [x] 桌宠交互：拖动移动窗口
-- [ ] 美观对话气泡（uGUI / TextMeshPro 替换 IMGUI 调试框）
+- [x] 对话气泡 UI：uGUI 运行时自建（头顶气泡 + 底部输入栏 + 流式显示 + 自动淡出）
 - [ ] 多角色管理与形态切换 UI
 - [ ] 系统托盘、开机自启、拖动与右键菜单
 - [ ] 动作系统：把 Mixamo/自制动画接到 VRM Animator，情绪→动作状态机
