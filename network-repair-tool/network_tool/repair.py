@@ -6,7 +6,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Callable, List, Optional
 
-from .detector import NetworkDetector, print_report
+from .detector import NetworkDetector, format_report, print_report
 from .utils import IS_LINUX, IS_WINDOWS, require_admin, run_command
 
 
@@ -88,11 +88,18 @@ class NetworkRepairer:
         level: str = "auto",
         step_names: Optional[List[str]] = None,
         verify: bool = True,
+        log: Optional[Callable[[str], None]] = None,
     ) -> RepairReport:
         """执行修复。
 
         level: light | medium | heavy | full | auto
         """
+        def _log(message: str) -> None:
+            if log:
+                log(message)
+            else:
+                print(message)
+
         report = RepairReport()
         available = {s.name: s for s in self.get_available_steps()}
 
@@ -126,19 +133,22 @@ class NetworkRepairer:
                 )
                 continue
 
-            print(f"\n>>> 正在执行: {step.description}...")
+            _log(f"\n>>> 正在执行: {step.description}...")
             ok, msg = step.action()
             report.add(RepairResult(step.name, ok, msg))
-            print(f"    {'✓' if ok else '✗'} {msg}")
+            _log(f"    {'✓' if ok else '✗'} {msg}")
             time.sleep(1)
 
         report.all_success = all(r.success for r in report.steps_run)
 
         if verify:
-            print("\n>>> 修复完成，正在重新检测网络...")
+            _log("\n>>> 修复完成，正在重新检测网络...")
             time.sleep(2)
             diag = self.detector.run_all_checks()
-            print_report(diag, verbose=False)
+            if log:
+                _log(format_report(diag, verbose=False))
+            else:
+                print_report(diag, verbose=False)
 
         return report
 
@@ -273,12 +283,20 @@ if ($adapter) {
         return code == 0, stdout or stderr or "NetworkManager 已重启"
 
 
-def print_repair_report(report: RepairReport) -> None:
-    print("\n" + "=" * 60)
-    print("  修复结果")
-    print("=" * 60)
+def format_repair_report(report: RepairReport) -> str:
+    lines = [
+        "",
+        "=" * 60,
+        "  修复结果",
+        "=" * 60,
+    ]
     for item in report.steps_run:
         icon = "✓" if item.success else "✗"
-        print(f"[{icon}] {item.step_name}: {item.message}")
-    print(f"\n总体: {'全部成功' if report.all_success else '部分步骤失败'}")
-    print("=" * 60)
+        lines.append(f"[{icon}] {item.step_name}: {item.message}")
+    lines.append(f"\n总体: {'全部成功' if report.all_success else '部分步骤失败'}")
+    lines.append("=" * 60)
+    return "\n".join(lines)
+
+
+def print_repair_report(report: RepairReport) -> None:
+    print(format_repair_report(report))

@@ -8,6 +8,7 @@
 
 | 命令 | 说明 |
 |------|------|
+| `gui` | 启动图形界面（按钮操作 + 日志面板） |
 | `detect` | 全面检测网卡、网关、DNS、Ping、TCP 连通性 |
 | `repair` | 按强度自动或手动修复网络 |
 | `watch` | 监控无畏契约进程，断网时自动修复 |
@@ -19,6 +20,9 @@
 ```powershell
 # 以管理员身份打开 PowerShell，进入工具目录
 cd network-repair-tool
+
+# 启动图形界面（推荐）
+python net-repair.py gui
 
 # 检测网络
 python net-repair.py detect

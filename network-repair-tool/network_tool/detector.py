@@ -307,23 +307,29 @@ class NetworkDetector:
         )
 
 
-def print_report(report: NetworkReport, verbose: bool = False) -> None:
-    """格式化打印检测报告。"""
-    print("=" * 60)
-    print("  网络状态检测报告")
-    print("=" * 60)
-    print(f"时间:     {report.timestamp}")
-    print(f"主机:     {report.hostname}")
-    print(f"系统:     {report.platform}")
-    print(f"总体:     {'✓ 正常' if report.overall_ok else '✗ 异常'}")
-    print(f"摘要:     {report.summary}")
-    print("-" * 60)
-
+def format_report(report: NetworkReport, verbose: bool = False) -> str:
+    """格式化检测报告为文本。"""
+    lines = [
+        "=" * 60,
+        "  网络状态检测报告",
+        "=" * 60,
+        f"时间:     {report.timestamp}",
+        f"主机:     {report.hostname}",
+        f"系统:     {report.platform}",
+        f"总体:     {'✓ 正常' if report.overall_ok else '✗ 异常'}",
+        f"摘要:     {report.summary}",
+        "-" * 60,
+    ]
     for check in report.checks:
         icon = "✓" if check.ok else "✗"
-        print(f"[{icon}] {check.name}: {check.message}")
+        lines.append(f"[{icon}] {check.name}: {check.message}")
         if verbose and check.details:
             for line in check.details.splitlines()[:5]:
-                print(f"    {line}")
+                lines.append(f"    {line}")
+    lines.append("=" * 60)
+    return "\n".join(lines)
 
-    print("=" * 60)
+
+def print_report(report: NetworkReport, verbose: bool = False) -> None:
+    """格式化打印检测报告。"""
+    print(format_report(report, verbose=verbose))

@@ -14,6 +14,17 @@ from .repair import NetworkRepairer, print_repair_report
 from .utils import IS_WINDOWS, require_admin, run_command
 
 
+def cmd_gui(_: argparse.Namespace) -> int:
+    try:
+        from .gui import run_gui
+    except ImportError as exc:
+        print(f"无法启动 GUI: {exc}")
+        print("请确认 Python 已安装 tkinter 组件。")
+        return 1
+    run_gui()
+    return 0
+
+
 def cmd_detect(args: argparse.Namespace) -> int:
     detector = NetworkDetector()
     report = detector.run_all_checks()
@@ -162,6 +173,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
 
     sub = parser.add_subparsers(dest="command", required=True)
+
+    p_gui = sub.add_parser("gui", help="启动图形界面")
+    p_gui.set_defaults(func=cmd_gui)
 
     p_detect = sub.add_parser("detect", help="检测当前网络状态")
     p_detect.add_argument("-v", "--verbose", action="store_true", help="显示详细信息")
