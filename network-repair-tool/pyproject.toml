@@ -1,0 +1,17 @@
+[project]
+name = "network-repair-tool"
+version = "1.0.0"
+description = "网络状态检测与修复工具，适用于无畏契约等游戏导致断网场景"
+readme = "README.md"
+requires-python = ">=3.8"
+
+[project.scripts]
+net-repair = "network_tool.cli:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["network_tool*"]
