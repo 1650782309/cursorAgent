@@ -212,16 +212,37 @@ class NetworkDetector:
 
     def _check_ping_targets(self) -> List[CheckResult]:
         results = []
+        success_count = 0
         for target in PING_TARGETS:
             ok, detail = ping_host(target, count=2, timeout_sec=3)
+            if ok:
+                success_count += 1
+            # 只保留首行摘要，避免日志刷屏
+            first_line = detail.splitlines()[0] if detail else ""
             results.append(
                 CheckResult(
                     f"Ping {target}",
                     ok,
                     format_status(ok),
-                    detail.splitlines()[0] if detail else "",
+                    first_line,
                 )
             )
+
+        # 3 个目标中至少 2 个成功即视为外网 Ping 正常
+        overall_ping_ok = success_count >= 2
+        if overall_ping_ok:
+            for item in results:
+                if item.name.startswith("Ping ") and not item.ok:
+                    item.ok = True
+                    item.message = "ICMP 可能被屏蔽（综合正常）"
+        results.append(
+            CheckResult(
+                "外网 Ping 综合",
+                overall_ping_ok,
+                f"{success_count}/{len(PING_TARGETS)} 可达",
+                "部分 DNS 可能屏蔽 ICMP，不影响实际上网" if not overall_ping_ok else "",
+            )
+        )
         return results
 
     def _check_dns_resolution(self) -> List[CheckResult]:
@@ -253,14 +274,19 @@ class NetworkDetector:
             code, stdout, _ = run_command(["sc", "query", svc], timeout=10)
             running = "RUNNING" in stdout
             details.append(f"{svc}: {'运行中' if running else '未运行'}")
-            if not running:
+            # NlaSvc 未运行较常见，不单独视为严重故障
+            if not running and svc not in ("NlaSvc",):
                 stopped.append(svc)
 
         ok = len(stopped) == 0
+        nla_stopped = any("NlaSvc: 未运行" in d for d in details)
+        msg = "全部关键服务运行中" if ok else f"{len(stopped)} 个关键服务未运行"
+        if nla_stopped:
+            msg += "（NlaSvc 未运行，修复时将尝试启动）"
         return CheckResult(
             "Windows 网络服务",
             ok,
-            "全部运行中" if ok else f"{len(stopped)} 个服务未运行",
+            msg,
             "; ".join(details),
         )
 
@@ -284,8 +310,13 @@ class NetworkDetector:
         if code != 0:
             return CheckResult("Winsock 目录", False, "无法读取 Winsock 目录", stderr or stdout)
 
-        entry_count = len(re.findall(r"^\s*\d+\)", stdout, re.MULTILINE))
-        if entry_count >= 10:
+        # 兼容中英文 Windows：按 GUID 条目计数
+        entry_count = len(re.findall(r"\{[0-9a-fA-F-]{36}\}", stdout))
+        if entry_count == 0:
+            # 回退：英文版编号格式 1) ...
+            entry_count = len(re.findall(r"^\s*\d+\)", stdout, re.MULTILINE))
+
+        if entry_count >= 5:
             return CheckResult("Winsock 目录", True, f"目录正常 ({entry_count} 项)", "")
         return CheckResult(
             "Winsock 目录",

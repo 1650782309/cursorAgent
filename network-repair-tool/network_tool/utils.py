@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import locale
 import os
 import platform
 import socket
@@ -11,6 +12,23 @@ from typing import Iterable, Sequence, Tuple
 
 IS_WINDOWS = platform.system() == "Windows"
 IS_LINUX = platform.system() == "Linux"
+
+
+def get_console_encoding() -> str:
+    """获取系统命令行输出编码。中文 Windows 通常为 GBK/CP936。"""
+    if IS_WINDOWS:
+        return locale.getpreferredencoding(False) or "gbk"
+    return "utf-8"
+
+
+def decode_output(data: bytes) -> str:
+    """解码命令输出，优先系统编码，失败时回退 UTF-8。"""
+    for encoding in (get_console_encoding(), "utf-8", "gbk", "cp936"):
+        try:
+            return data.decode(encoding)
+        except (UnicodeDecodeError, LookupError):
+            continue
+    return data.decode("utf-8", errors="replace")
 
 
 def run_command(
@@ -25,17 +43,18 @@ def run_command(
         result = subprocess.run(
             list(command),
             capture_output=True,
-            text=True,
             timeout=timeout,
             shell=shell,
-            encoding="utf-8",
-            errors="replace",
         )
+        stdout = decode_output(result.stdout).strip()
+        stderr = decode_output(result.stderr).strip()
         if check and result.returncode != 0:
             raise subprocess.CalledProcessError(
-                result.returncode, command, result.stdout, result.stderr
+                result.returncode, command, stdout, stderr
             )
-        return result.returncode, result.stdout.strip(), result.stderr.strip()
+        return result.returncode, stdout, stderr
+    except subprocess.CalledProcessError:
+        raise
     except subprocess.TimeoutExpired:
         return -1, "", f"命令超时 ({timeout}s): {' '.join(command)}"
     except FileNotFoundError:

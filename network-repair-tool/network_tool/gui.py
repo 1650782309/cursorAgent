@@ -137,7 +137,7 @@ class NetworkRepairApp:
         self.log_text = scrolledtext.ScrolledText(
             frame,
             wrap=tk.WORD,
-            font=("Consolas", 10),
+            font=("Microsoft YaHei UI", 10),
             bg="#11111b",
             fg=self.TEXT,
             insertbackground=self.TEXT,

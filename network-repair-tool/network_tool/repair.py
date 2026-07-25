@@ -158,7 +158,7 @@ class NetworkRepairer:
 
         failed_names = {c.name for c in diag.checks if not c.ok}
 
-        if any("Ping" in n for n in failed_names) or "默认路由" in failed_names:
+        if any("外网 Ping 综合" in n or "Ping 综合" in n for n in failed_names) or "默认路由" in failed_names:
             selected_names.extend(self.MEDIUM_STEPS)
 
         if any("DNS" in n for n in failed_names):
@@ -211,13 +211,52 @@ class NetworkRepairer:
 
     def _restart_services(self) -> tuple[bool, str]:
         if IS_WINDOWS:
-            services = ["Dnscache", "Dhcp", "NlaSvc"]
-            results = []
-            for svc in services:
-                run_command(["net", "stop", svc], timeout=30)
-                code, _, stderr = run_command(["net", "start", svc], timeout=30)
-                results.append(f"{svc}: {'OK' if code == 0 else stderr[:50]}")
-            return True, "; ".join(results)
+            # 避免 net stop Dnscache 卡死：仅重启 Dhcp，启动已停止的 NlaSvc，跳过 Dnscache
+            ps_script = """
+$ErrorActionPreference = 'Continue'
+$results = @()
+$plan = @(
+    @{ Name = 'Dhcp'; Action = 'Restart' },
+    @{ Name = 'NlaSvc'; Action = 'StartIfStopped' },
+    @{ Name = 'Netman'; Action = 'StartIfStopped' }
+)
+foreach ($item in $plan) {
+    $name = $item.Name
+    $svc = Get-Service -Name $name -ErrorAction SilentlyContinue
+    if ($null -eq $svc) {
+        $results += "$name: 服务不存在"
+        continue
+    }
+    try {
+        if ($item.Action -eq 'Restart' -and $svc.Status -eq 'Running') {
+            Restart-Service -Name $name -Force -ErrorAction Stop
+            $results += "$name: 已重启"
+        } elseif ($svc.Status -ne 'Running') {
+            Start-Service -Name $name -ErrorAction Stop
+            $results += "$name: 已启动"
+        } else {
+            $results += "$name: 运行中"
+        }
+    } catch {
+        $results += "$name: 失败 $($_.Exception.Message)"
+    }
+}
+$results -join '; '
+"""
+            code, stdout, stderr = run_command(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-Command",
+                    ps_script,
+                ],
+                timeout=45,
+            )
+            msg = stdout or stderr or "服务操作完成"
+            ok = code == 0 and "失败" not in msg
+            return ok, msg
 
         return self._restart_network_manager()
 
