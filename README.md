@@ -14,8 +14,9 @@
 | --- | --- |
 | `wildcards/` | 按角色/服装/设计/镜头/画风分类的词库，发散的原料 |
 | `prompts/templates/` | 提示词模板：发散、剪影扫描、控制变量比对、Flux 精修、三视图 |
-| `workflows/api/` | ComfyUI API 格式工作流，只用核心节点 |
-| `scripts/` | 批量出图、出图索引、数据集体检、自测 |
+| `workflows/api/` | ComfyUI API 格式工作流，只用核心节点，给脚本驱动 |
+| `workflows/ui/` | 上面那份的界面版，浏览器里直接打开（由脚本生成） |
+| `scripts/` | 批量出图、出图索引、数据集体检、工作流格式转换、自测 |
 | `training/` | SDXL 与 Flux.1 的角色 LoRA 训练配置 |
 | `docs/` | 环境、选型、各阶段操作与取舍说明 |
 
@@ -39,6 +40,13 @@ python scripts/batch_generate.py \
 
 # 5. 给出图建索引，任何一张好图都能查回参数
 python scripts/index_outputs.py --root /path/to/ComfyUI/output/pass1
+```
+
+想在浏览器里手动调参，先生成界面版工作流（需要 ComfyUI 已启动），
+再用 **工作流 → 打开** 载入 `workflows/ui/*.json`：
+
+```bash
+python scripts/api_to_ui_workflow.py
 ```
 
 出图前把 `workflows/api/*.json` 里的模型文件名改成你本地实际的文件名，

@@ -1,6 +1,30 @@
 # 工作流说明
 
-## 为什么是 API 格式
+## 两份格式，各管一件事
+
+| 目录 | 格式 | 用途 |
+| --- | --- | --- |
+| `workflows/api/` | API 格式 | 给 `scripts/batch_generate.py` 批量驱动，**这是真实来源** |
+| `workflows/ui/` | UI 格式 | 在浏览器里打开、手动调参和交互式操作 |
+
+`workflows/ui/` 由脚本从 `workflows/api/` 生成，不要手改：
+
+```bash
+# ComfyUI 需要先启动
+python scripts/api_to_ui_workflow.py
+```
+
+转换时会连上本机 ComfyUI 读取真实的节点定义（`/object_info`），据此判断哪些参数是控件、
+哪些是连线接口，所以不会出现"照文档写死参数顺序、换个 ComfyUI 版本就错位"的问题。
+换了 ComfyUI 版本或装了新节点包之后，重跑一次即可。
+
+在浏览器里用 **工作流 → 打开** 选择 `workflows/ui/*.json` 载入。
+
+> ComfyUI 首次打开时会加载它自带的示例工作流，那个示例引用了本仓库没有下载的模型
+> （比如 `anything-v5-PrtRE.safetensors`），因此会报"缺失模型"。这与本仓库无关，
+> 载入上面的工作流即可，或者把示例里的 checkpoint 换成 `illustriousXL.safetensors`。
+
+## 为什么以 API 格式为准
 
 `workflows/api/*.json` 是 ComfyUI 的 **API 格式**（`{节点ID: {class_type, inputs}}`），
 不是界面里"保存"出来的 UI 格式。原因：
@@ -9,8 +33,9 @@
 - 结构扁平，diff 清晰，参数改动在代码评审里看得懂
 - 没有画布坐标等噪声，不会因为拖动节点产生无意义的改动
 
-这些文件用于**脚本化批量执行**。交互式操作（局部重绘、逐块推进）请在
-ComfyUI 界面里手动搭图，那是界面更擅长的事。
+这些文件用于**脚本化批量执行**。交互式操作（局部重绘、逐块推进）在界面里做，
+载入 `workflows/ui/` 下对应的那一份即可。改了参数想固化回来，就改 `workflows/api/`
+再重新生成 UI 版，不要反过来——否则两边会各改各的。
 
 ## 只用核心节点
 
@@ -87,9 +112,13 @@ Flux.1 dev fp8 的 img2img。注意几点：
 ## 改动后
 
 ```bash
-python scripts/selftest.py
+python scripts/selftest.py                  # 不需要 ComfyUI，校验结构
+python scripts/api_to_ui_workflow.py        # 需要 ComfyUI，重新生成界面版
 ```
 
-会校验每个工作流的节点引用是否合法、必需标记是否齐全。
+`selftest.py` 会校验每个工作流的节点引用是否合法、必需标记是否齐全。
 注意它**不校验节点参数名是否被 ComfyUI 接受**——那需要真的连上 ComfyUI，
 所以换过自定义节点版本后，先用 `--count 1` 跑一张确认。
+
+`api_to_ui_workflow.py` 因为要读真实节点定义，顺带就能发现"本机缺少某个节点包"
+和"参数名对不上"这两类问题，改完工作流后建议一并跑一遍。
