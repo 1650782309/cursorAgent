@@ -4,9 +4,9 @@
 
 本仓库是一套动画／游戏角色设定资料集（Markdown 文档 + SVG 素材 + 少量 PNG 立绘），不是传统的可运行服务。
 
-- **仓库收录多个互不相关的企划**，各自独立成册，画风与作画规范禁止混用：
-  - `docs/kirimicho` + `assets/kirimicho` —《雾见町 遗物招领所》（TV 动画，硬边赛璐璐）
-  - `docs/icarus` + `assets/icarus` —《黄昏之羽》（幻想手游立绘，柔和赛璐璐 + 水彩渐变）
+- **仓库收录多个互不相关的企划**，世界观独立；**作画基线统一为 TV 动画赛璐璐**（见各企划 `03` / 雾见町 `05`）：
+  - `docs/kirimicho` + `assets/kirimicho` —《雾见町 遗物招领所》（深夜档 TV 动画）
+  - `docs/icarus` + `assets/icarus` —《黄昏之羽》（TV 动画，与左共用作画规范）
 - **唯一的「程序」**：`tools/gen_visuals.py`，由 `tools/palettes.json` 生成
   `assets/<企划 id>/palettes/*.svg` 与 `assets/<企划 id>/proportions.svg`。
 - **依赖**：只用 Python 3 标准库（环境已装 Python 3.12），无第三方包、无 lock 文件、无 npm/pip 依赖，因此没有可安装的依赖，也没有独立的 lint / 测试框架。

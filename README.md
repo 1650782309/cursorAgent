@@ -3,12 +3,12 @@
 > キャラクターデザイン資料集 / Character Design Bibles
 
 原创动画与游戏角色的设定集合。目前收录两个**互不相关**的企划，
-各自拥有独立的世界观、画风基线与作画规范，请勿混用。
+世界观独立；**作画基线统一**为现代 TV 动画赛璐璐（硬边阴影、锐利线稿、扁平色块）。
 
 | 企划 | 媒体 | 画风 | 角色数 | 入口 |
 | --- | --- | --- | --- | --- |
-| 《雾见町 遗物招领所》 | 深夜档 TV 动画（12 话） | 硬边赛璐璐，锐利线稿，扁平色块 | 4 | [docs/kirimicho](docs/kirimicho/00-世界观设定.md) |
-| 《黄昏之羽》 | 日式幻想 RPG 手游 | 柔和赛璐璐 + 水彩渐变，低对比度 | 1 | [docs/icarus](docs/icarus/00-企划与世界观.md) |
+| 《雾见町 遗物招领所》 | 深夜档 TV 动画（12 话） | TV 动画赛璐璐 | 4 | [docs/kirimicho](docs/kirimicho/00-世界观设定.md) |
+| 《黄昏之羽》 | TV 动画（1 クール 想定） | TV 动画赛璐璐（与左共通） | 1 | [docs/icarus](docs/icarus/00-企划与世界观.md) |
 
 ---
 
@@ -64,7 +64,7 @@
 
 ![伊卡洛斯配色卡](assets/icarus/palettes/icarus.svg)
 
-| 概念立绘（雾见町 TV 赛璐璐画风） |
+| 概念立绘（TV 赛璐璐 · 白底网格） |
 | --- |
 | ![伊卡洛斯](assets/icarus/concepts/icarus-keyvisual.png) |
 
