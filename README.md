@@ -81,10 +81,13 @@
 所以改设定就等于改产出。
 
 ```bash
-pip install -r requirements.txt
-python -m spineforge list                 # 看有哪些角色和换装预设
-python -m spineforge run akari field_work # 建模 -> 关键姿势 -> 换装 -> 预览
+pip install -e .
+spineforge doctor                  # 自检：依赖、设定集、画布对齐
+spineforge list                    # 看有哪些角色和换装预设
+spineforge run akari field_work    # 建模 -> 关键姿势 -> 换装 -> 预览
 ```
+
+本地安装（含 Windows 与接 Stable Diffusion）见 [docs/INSTALL.md](docs/INSTALL.md)。
 
 换装算法移植自 [RedrawSpine](https://github.com/Zhangyangrui916/RedrawSpine)，
 但改写成了纯 numpy 软件渲染，不需要 GPU、Spine 编辑器和 Photoshop。
@@ -98,6 +101,7 @@ python -m spineforge run akari field_work # 建模 -> 关键姿势 -> 换装 -> 
 docs/
   kirimicho/           《雾见町 遗物招领所》设定文档
   icarus/              《黄昏之羽》设定文档
+  INSTALL.md           Spine 工作流本地安装
   spineforge.md        Spine 工作流总览
   WORKFLOW.md          Spine 工作流调参与排查手册
 assets/

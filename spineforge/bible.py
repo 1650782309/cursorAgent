@@ -20,7 +20,9 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
-BIBLE_PATH = Path(__file__).resolve().parent.parent / "tools" / "palettes.json"
+from spineforge.config import REPO_ROOT
+
+BIBLE_PATH = REPO_ROOT / "tools" / "palettes.json"
 
 _ASCII_WORD = re.compile(r"[A-Za-z]+")
 _HEIGHT = re.compile(r"(\d+(?:\.\d+)?)\s*cm")

@@ -10,7 +10,29 @@ import os
 from dataclasses import dataclass, fields
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+def _find_repo_root() -> Path:
+    """定位仓库根目录（同时含 ``concepts/`` 与 ``tools/palettes.json``）。
+
+    概念库和设定集是数据而不是代码，所以不会随包被安装到 site-packages。
+    正常用法是从克隆出来的仓库里 ``pip install -e .``，此时源码树就在原地；
+    但如果被非 editable 地装到别处，就退回到从当前目录向上找，
+    这样在仓库里任意子目录执行 ``spineforge`` 都能工作。
+    """
+    marker = ("concepts", "tools/palettes.json")
+
+    def looks_like_repo(path: Path) -> bool:
+        return all((path / m).exists() for m in marker)
+
+    here = Path(__file__).resolve().parent.parent
+    if looks_like_repo(here):
+        return here
+    for candidate in (Path.cwd(), *Path.cwd().parents):
+        if looks_like_repo(candidate):
+            return candidate
+    return here
+
+
+REPO_ROOT = _find_repo_root()
 
 
 @dataclass

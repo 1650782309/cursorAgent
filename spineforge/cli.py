@@ -34,6 +34,17 @@ def cmd_list(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_doctor(args: argparse.Namespace) -> int:
+    from spineforge import doctor
+
+    cfg = _cfg(args)
+    log("spineforge 环境自检")
+    checks = doctor.run(cfg, probe_sd=args.sd)
+    text, code = doctor.report(checks, probe_sd=args.sd)
+    log(text)
+    return code
+
+
 def cmd_show(args: argparse.Namespace) -> int:
     cfg = _cfg(args)
     c = load_concept(args.concept, cfg)
@@ -132,6 +143,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--build-dir", help=f"产物根目录（默认 {DEFAULT.build_dir}）")
     sub = p.add_subparsers(dest="command", required=True)
+
+    s = sub.add_parser("doctor", help="安装自检：依赖、设定集、画布对齐、SD 连通性")
+    s.add_argument("--sd", action="store_true", help="顺带体检 Stable Diffusion WebUI")
+    s.add_argument("--downscale", type=int)
+    s.set_defaults(func=cmd_doctor)
 
     s = sub.add_parser("list", help="列出角色概念库")
     s.set_defaults(func=cmd_list)

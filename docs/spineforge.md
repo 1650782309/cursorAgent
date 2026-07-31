@@ -19,13 +19,20 @@
 
 ## 快速开始
 
-```bash
-pip install -r requirements.txt
+本地安装的完整步骤（含 Windows、以及怎么接 Stable Diffusion）见
+[INSTALL.md](INSTALL.md)。最短路径：
 
-python -m spineforge list                        # 看看有哪些角色和换装预设
-python -m spineforge show akari                  # 灯莉的部件表、绘制顺序、哪些部件保形
-python -m spineforge run akari field_work        # 一条龙：建模 -> 预处理 -> 换装 -> 预览
+```bash
+pip install -e .
+
+spineforge doctor                        # 自检：依赖、设定集、画布对齐、目录可写
+spineforge list                          # 看看有哪些角色和换装预设
+spineforge show akari                    # 灯莉的部件表、绘制顺序、哪些部件保形
+spineforge run akari field_work          # 一条龙：建模 -> 预处理 -> 换装 -> 预览
 ```
+
+不想装包的话，`pip install -r requirements.txt` 之后用
+`python -m spineforge ...` 完全等价。
 
 产物在 `build/akari/skins/field_work_0/`：`images/` 是新贴图，
 `preview/` 是各动画 GIF 和关键姿势对照图，`steps/` 是逐姿势的中间图（底图 / mask / canny / 重绘结果）。
@@ -34,7 +41,8 @@ python -m spineforge run akari field_work        # 一条龙：建模 -> 预处�
 
 ```bash
 # 先启动 Stable Diffusion WebUI（带 --api 与 ControlNet 扩展）
-python -m spineforge reskin akari field_work --seed 12345 --backend webui --preview
+spineforge doctor --sd                   # 确认 API、底模、ControlNet 模型都对得上
+spineforge reskin akari field_work --seed 12345 --backend webui --preview
 ```
 
 ---
@@ -125,6 +133,7 @@ concepts/<角色>.yaml ──┤   部件拆分 + 换装预设
 
 | 命令 | 作用 |
 | --- | --- |
+| `spineforge doctor [--sd]` | 安装自检；加 `--sd` 顺带体检 Stable Diffusion |
 | `spineforge list` | 列出概念库 |
 | `spineforge show <角色>` | 查看部件表、绘制顺序、哪些部件保形 |
 | `spineforge build [角色\|all]` | 生成贴图 + 骨架 + 动画 |
@@ -137,7 +146,7 @@ concepts/<角色>.yaml ──┤   部件拆分 + 换装预设
 
 ```bash
 for s in $(seq 100 130); do
-  python -m spineforge reskin akari field_work --seed $s --backend webui --no-steps
+  spineforge reskin akari field_work --seed $s --backend webui --no-steps
 done
 ```
 

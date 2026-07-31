@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spineforge"
+version = "0.1.0"
+description = "由角色设定集驱动的 Spine 动画自动生成与 Stable Diffusion 换装工作流"
+readme = "docs/spineforge.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+
+dependencies = [
+    "numpy>=1.26",
+    "pillow>=10.0",
+    "pyyaml>=6.0",
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+spineforge = "spineforge.cli:main"
+
+[tool.setuptools]
+# 角色设定集与概念库是数据不是代码，不打进 wheel。
+# 正常用法是从克隆出来的仓库 `pip install -e .`，源码树留在原地。
+packages = ["spineforge"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
