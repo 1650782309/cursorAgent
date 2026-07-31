@@ -13,10 +13,12 @@ from typing import Any, Iterable
 
 import yaml
 
+from spineforge.bible import BibleCharacter, derive_rig, get_character
 from spineforge.config import DEFAULT, Config
 
 ID_RE = re.compile(r"^[a-z0-9_]+$")
-SHAPES = {"capsule", "ellipse", "blade", "bell", "plate", "cape"}
+SHAPES = {"capsule", "ellipse", "blade", "bell", "plate", "cape",
+          "cone", "wing", "ring"}
 # 贴图四周留白，给描边和抗锯齿边缘留位置。与 partgen.PAD 保持一致。
 PART_PADDING = 2
 
@@ -31,6 +33,9 @@ class Canvas:
     height: int
     origin_x: float
     origin_y: float
+    # 像素/厘米。设定集给的是厘米身高，靠它换算成画布尺寸，
+    # 于是 178cm 的墨在画面上确实比 142cm 的忍高一头。
+    px_per_cm: float = 2.4
 
 
 @dataclass(frozen=True)
@@ -44,6 +49,8 @@ class Part:
     offset: tuple[float, float] = (0.0, 0.0)
     rotation: float = 0.0
     shade: float = 0.25
+    # 左右对称的部件（羽翼、耳朵）只画一侧的贴图，另一侧翻过来用
+    mirror: bool = False
     redraw: bool = True
     tags: tuple[str, ...] = ()
     # 贴图分辨率，由 size * rig.unit 推出，加载概念时填入。
@@ -74,6 +81,8 @@ class Concept:
     groups: tuple[tuple[str, ...], ...]
     outfits: dict[str, Outfit]
     source_path: Path | None = None
+    # 来自角色设定集的原始条目，None 表示这份概念自带配色（主要用于测试）
+    bible: BibleCharacter | None = None
 
     def part(self, name: str) -> Part:
         for p in self.parts:
@@ -124,13 +133,45 @@ def _req(data: dict[str, Any], key: str, ctx: str) -> Any:
     return data[key]
 
 
-def _pair(value: Any, ctx: str) -> tuple[float, float]:
+def _num(value: Any, rig: dict[str, float], ctx: str) -> float:
+    """把尺寸/偏移解析成头长倍数。
+
+    除了直接写数字，还能引用骨骼长度，例如大腿贴图写 ``"thigh"``、
+    贴图中心写 ``"thigh*0.5"``、外套盖住腰腹加胸腔写 ``"torso+chest"``。
+    头身比不同的角色腿长本来就不同，引用骨骼长度就不用为每个角色重算一遍。
+    """
+    if isinstance(value, (int, float)):
+        return float(value)
+    if not isinstance(value, str):
+        raise ConceptError(f"{ctx} 应为数字或骨骼长度表达式，收到 {value!r}")
+
+    total = 0.0
+    for term in value.split("+"):
+        term = term.strip()
+        if not term:
+            continue
+        key, _, factor = term.partition("*")
+        key = key.strip()
+        scale = float(factor) if factor.strip() else 1.0
+        try:
+            total += float(key) * scale
+        except ValueError:
+            if key not in rig:
+                raise ConceptError(
+                    f"{ctx} 引用了未知的骨骼长度 {key!r}，可用：{sorted(rig)}"
+                ) from None
+            total += rig[key] * scale
+    return total
+
+
+def _pair(value: Any, rig: dict[str, float], ctx: str) -> tuple[float, float]:
     if not isinstance(value, (list, tuple)) or len(value) != 2:
-        raise ConceptError(f"{ctx} 应为 [x, y] 两个数字，收到 {value!r}")
-    return float(value[0]), float(value[1])
+        raise ConceptError(f"{ctx} 应为 [x, y] 两项，收到 {value!r}")
+    return _num(value[0], rig, f"{ctx}[0]"), _num(value[1], rig, f"{ctx}[1]")
 
 
-def parse_concept(data: dict[str, Any], source_path: Path | None = None) -> Concept:
+def parse_concept(data: dict[str, Any], source_path: Path | None = None,
+                  bible_path: Path | None = None) -> Concept:
     cid = str(_req(data, "id", "概念文件"))
     if not ID_RE.match(cid):
         raise ConceptError(f"id {cid!r} 只能包含小写字母、数字和下划线")
@@ -142,13 +183,39 @@ def parse_concept(data: dict[str, Any], source_path: Path | None = None) -> Conc
         height=int(_req(canvas_raw, "height", f"{ctx}.canvas")),
         origin_x=float(canvas_raw.get("origin_x", canvas_raw["width"] / 2)),
         origin_y=float(canvas_raw.get("origin_y", canvas_raw["height"] * 0.9)),
+        px_per_cm=float(canvas_raw.get("px_per_cm", 2.4)),
     )
 
-    palette = {str(k): str(v) for k, v in _req(data, "palette", ctx).items()}
+    # 引用了设定集就从设定集取配色与头身比，概念文件里不再重复色号。
+    bible: BibleCharacter | None = None
+    if "bible" in data:
+        bible = get_character(str(data["bible"]), bible_path)
+        palette = dict(bible.palette)
+        rig = derive_rig(bible.heads, bible.height_cm, canvas.px_per_cm)
+    else:
+        palette = {}
+        rig = {}
+
+    # `palette` 用于补充设定集里没有的颜色（例如灵体雾这类特效色）
+    for k, v in (data.get("palette") or {}).items():
+        palette[str(k)] = str(v)
+    if not palette:
+        raise ConceptError(f"{ctx} 需要 bible 引用或 palette 字段之一来提供配色")
     for k, v in palette.items():
         hex_to_rgb(v)  # 早失败
 
-    rig = {str(k): float(v) for k, v in _req(data, "rig", ctx).items()}
+    # `aliases` 给设定集的机械命名起可读的名字：hanten -> costume_3
+    for alias, target in (data.get("aliases") or {}).items():
+        if target not in palette:
+            hint = ""
+            if bible:
+                hint = "，设定集给出的配色键：" + "、".join(
+                    f"{k}({bible.uses.get(k, '')})" for k in bible.palette
+                )
+            raise ConceptError(f"{ctx}.aliases[{alias}] 指向不存在的配色 {target!r}{hint}")
+        palette[str(alias)] = palette[target]
+
+    rig.update({str(k): float(v) for k, v in (data.get("rig") or {}).items()})
     if rig.get("unit", 0) <= 0:
         raise ConceptError(f"{ctx}.rig.unit 必须为正数")
 
@@ -166,7 +233,7 @@ def parse_concept(data: dict[str, Any], source_path: Path | None = None) -> Conc
         color = str(_req(raw, "color", pctx))
         if color not in palette:
             raise ConceptError(f"{pctx}.color={color!r} 不在 palette 中")
-        size = _pair(_req(raw, "size", pctx), f"{pctx}.size")
+        size = _pair(_req(raw, "size", pctx), rig, f"{pctx}.size")
         if size[0] <= 0 or size[1] <= 0:
             raise ConceptError(f"{pctx}.size 必须为正数")
         unit = rig["unit"]
@@ -183,9 +250,10 @@ def parse_concept(data: dict[str, Any], source_path: Path | None = None) -> Conc
                 size=size,
                 color=color,
                 order=int(_req(raw, "order", pctx)),
-                offset=_pair(raw.get("offset", [0, 0]), f"{pctx}.offset"),
+                offset=_pair(raw.get("offset", [0, 0]), rig, f"{pctx}.offset"),
                 rotation=float(raw.get("rotation", 0.0)),
                 shade=float(raw.get("shade", 0.25)),
+                mirror=bool(raw.get("mirror", False)),
                 redraw=bool(raw.get("redraw", True)),
                 tags=tuple(str(t) for t in raw.get("tags", ())),
             )
@@ -225,9 +293,9 @@ def parse_concept(data: dict[str, Any], source_path: Path | None = None) -> Conc
 
     return Concept(
         id=cid,
-        name=str(data.get("name", cid)),
+        name=str(data.get("name") or (bible.name if bible else cid)),
         archetype=str(data.get("archetype", "")),
-        summary=str(data.get("summary", "")),
+        summary=str(data.get("summary") or (bible.subtitle if bible else "")),
         canvas=canvas,
         palette=palette,
         rig=rig,
@@ -236,6 +304,7 @@ def parse_concept(data: dict[str, Any], source_path: Path | None = None) -> Conc
         groups=tuple(groups),
         outfits=outfits,
         source_path=source_path,
+        bible=bible,
     )
 
 

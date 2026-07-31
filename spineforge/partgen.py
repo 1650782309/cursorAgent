@@ -70,6 +70,25 @@ def _shape_coverage(shape: str, w: int, h: int) -> np.ndarray:
         notch = 0.18 * np.clip(1.0 - np.abs(x) / 0.30, 0, 1)
         mask = (np.abs(x) <= half) & (y >= -1.0 + notch)
 
+    elif shape == "cone":
+        # 尖角：雨衣的硬尖帽檐、猫耳。底边平、顶点尖。
+        t = (1.0 - y) * 0.5
+        mask = np.abs(x) <= np.clip(t ** 0.9, 0.0, 1.0)
+
+    elif shape == "wing":
+        # 羽翼：根部在贴图底边中央，向上并向一侧弧出，中段最宽、翼尖收拢。
+        # 用一条弯曲的中心线加纺锤形宽度描出来，保证是"自然的鸟类弧线"，
+        # 而不是几何能量翼。另一侧用部件的 mirror 开关翻过来。
+        t = np.clip((y + 1.0) * 0.5, 0.0, 1.0)
+        center = 0.85 * t ** 1.25 - 0.10
+        half = 0.52 * np.sin(np.pi * np.clip(t, 0.0, 1.0) ** 0.8)
+        mask = np.abs(x - center) <= np.maximum(half, 1e-6)
+
+    elif shape == "ring":
+        # 光轮：细圆环。
+        r2 = x * x + y * y
+        mask = (r2 <= 1.0) & (r2 >= 0.62 ** 2)
+
     else:
         raise ValueError(f"未知形状 {shape!r}")
 

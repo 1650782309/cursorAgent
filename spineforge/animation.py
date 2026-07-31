@@ -53,16 +53,33 @@ class _Builder:
         return {"bones": self.bones}
 
 
+def _appendages(b: _Builder, tail: float, wing: float, cycles: float = 1.0) -> None:
+    """给尾巴和翅膀加摆动。
+
+    设定集里墨的尾巴"尾尖动作独立于表情，作画时当作独立演员处理"，
+    所以尾巴第二节比第一节相位滞后，看起来像被甩出去的。
+    没有这些部位的角色，骨骼上没挂 attachment，这些轨道等于不存在。
+    """
+    b.rotate("tail_01", lambda p: tail * math.sin(TAU * cycles * p))
+    b.rotate("tail_02", lambda p: tail * 1.6 * math.sin(TAU * cycles * p - 0.9))
+    for side, sign in (("l", 1.0), ("r", -1.0)):
+        # 两侧反相，翅膀才是"扇"而不是整体平移
+        b.rotate(f"wing_{side}", lambda p, s=sign: s * wing * math.sin(TAU * cycles * p))
+        b.rotate(f"wing_{side}_02",
+                 lambda p, s=sign: s * wing * 1.4 * math.sin(TAU * cycles * p - 0.7))
+
+
 def _idle(concept: Concept) -> _Builder:
     u = concept.rig["unit"]
     b = _Builder(duration=2.0, keys=12)
-    b.translate("hip", lambda p: (0.0, 0.9 * u * math.sin(TAU * p)))
+    b.translate("hip", lambda p: (0.0, 0.03 * u * math.sin(TAU * p)))
     b.rotate("torso", lambda p: 1.6 * math.sin(TAU * p))
     b.rotate("chest", lambda p: 1.2 * math.sin(TAU * p + 0.5))
     b.rotate("head", lambda p: -1.8 * math.sin(TAU * p + 0.9))
     for side, sign in (("l", 1.0), ("r", -1.0)):
         b.rotate(f"upper_arm_{side}", lambda p, s=sign: s * 3.5 * math.sin(TAU * p + 0.6))
         b.rotate(f"lower_arm_{side}", lambda p, s=sign: s * 2.5 * math.sin(TAU * p + 1.1))
+    _appendages(b, tail=6.0, wing=4.0)
     return b
 
 
@@ -70,16 +87,21 @@ def _breath(concept: Concept) -> _Builder:
     u = concept.rig["unit"]
     b = _Builder(duration=2.4, keys=12)
     b.scale("chest", lambda p: (1.0 + 0.03 * math.sin(TAU * p), 1.0 + 0.05 * math.sin(TAU * p)))
-    b.translate("head", lambda p: (0.0, 0.6 * u * math.sin(TAU * p)))
+    b.translate("head", lambda p: (0.0, 0.02 * u * math.sin(TAU * p)))
     b.rotate("torso", lambda p: 1.0 * math.sin(TAU * p))
     for side, sign in (("l", 1.0), ("r", -1.0)):
         b.rotate(f"upper_arm_{side}", lambda p, s=sign: s * 5.0 * math.sin(TAU * p))
+    _appendages(b, tail=4.0, wing=6.0)
     return b
 
 
 def _gait(concept: Concept, duration: float, swing: float, knee: float,
           arm: float, lean: float, bob: float) -> _Builder:
-    """走 / 跑共用的步态生成器，只是幅度不同。"""
+    """走 / 跑共用的步态生成器，只是幅度不同。
+
+    ``bob`` 是骨盆上下起伏的幅度，单位是头长——``rig.unit`` 就是一个头长的像素数，
+    所以同一套数值在 5.5 头身和 8.0 头身的角色上都是合理的比例。
+    """
     u = concept.rig["unit"]
     b = _Builder(duration=duration, keys=16)
     b.translate("hip", lambda p: (0.0, bob * u * math.cos(2 * TAU * p)))
@@ -96,15 +118,16 @@ def _gait(concept: Concept, duration: float, swing: float, knee: float,
                  lambda p, ph=phase: -arm * math.sin(TAU * p + ph))
         b.rotate(f"lower_arm_{side}",
                  lambda p, ph=phase: -arm * 0.45 * (0.6 + 0.4 * math.sin(TAU * p + ph + 1.2)))
+    _appendages(b, tail=swing * 0.5, wing=arm * 0.4, cycles=2.0)
     return b
 
 
 def _walk(concept: Concept) -> _Builder:
-    return _gait(concept, duration=1.0, swing=26.0, knee=22.0, arm=20.0, lean=1.5, bob=1.2)
+    return _gait(concept, duration=1.0, swing=26.0, knee=22.0, arm=20.0, lean=1.5, bob=0.04)
 
 
 def _run(concept: Concept) -> _Builder:
-    return _gait(concept, duration=0.7, swing=46.0, knee=52.0, arm=38.0, lean=-9.0, bob=2.6)
+    return _gait(concept, duration=0.7, swing=46.0, knee=52.0, arm=38.0, lean=-9.0, bob=0.09)
 
 
 def _ease(p: float, start: float, end: float) -> float:
@@ -131,6 +154,7 @@ def _wave(concept: Concept) -> _Builder:
     b.rotate("torso", lambda p: 3.0 * raise_amount(p))
     b.rotate("head", lambda p: -5.0 * raise_amount(p))
     b.rotate("chest", lambda p: 2.0 * math.sin(TAU * p))
+    _appendages(b, tail=14.0, wing=10.0, cycles=2.0)
     return b
 
 
@@ -144,7 +168,7 @@ def _cast(concept: Concept) -> _Builder:
     b.rotate("torso", lambda p: -7.0 * charge(p) + 10.0 * _ease(p, 0.45, 0.6) * (1 - _ease(p, 0.7, 0.95)))
     b.rotate("chest", lambda p: -4.0 * charge(p))
     b.rotate("head", lambda p: -6.0 * charge(p))
-    b.translate("hip", lambda p: (0.0, -1.5 * u * charge(p)))
+    b.translate("hip", lambda p: (0.0, -0.05 * u * charge(p)))
     b.rotate("upper_arm_r", lambda p: -95.0 * charge(p))
     b.rotate("lower_arm_r", lambda p: -40.0 * charge(p))
     b.rotate("upper_arm_l", lambda p: 70.0 * charge(p))
@@ -152,6 +176,12 @@ def _cast(concept: Concept) -> _Builder:
     b.rotate("thigh_l", lambda p: 10.0 * charge(p))
     b.rotate("thigh_r", lambda p: -12.0 * charge(p))
     b.rotate("shin_r", lambda p: -18.0 * charge(p))
+    # 起势时翅膀张开、尾巴绷紧，收势时回位
+    b.rotate("tail_01", lambda p: -22.0 * charge(p))
+    b.rotate("tail_02", lambda p: -30.0 * charge(p))
+    for side, sign in (("l", 1.0), ("r", -1.0)):
+        b.rotate(f"wing_{side}", lambda p, s=sign: s * 26.0 * charge(p))
+        b.rotate(f"wing_{side}_02", lambda p, s=sign: s * 18.0 * charge(p))
     return b
 
 

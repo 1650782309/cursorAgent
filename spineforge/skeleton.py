@@ -43,7 +43,13 @@ def build_bones(concept: Concept) -> list[BoneDef]:
     r = concept.rig
     u = r["unit"]
 
+    # 尾巴和翅膀不是每个角色都有，缺了就按默认比例建骨骼——
+    # 没挂 attachment 的骨骼在渲染时是不可见的。
+    optional = {"tail": 0.8, "wing": 2.0}
+
     def L(key: str) -> float:
+        if key in optional:
+            return r.get(key, optional[key]) * u
         return r[key] * u
 
     bones: list[BoneDef] = []
@@ -83,6 +89,17 @@ def build_bones(concept: Concept) -> list[BoneDef]:
         add(f"shin_{side}", f"thigh_{side}", L("thigh"), 0.0, -90.0 - 1.0 * sign, L("shin"))
         add(f"foot_{side}", f"shin_{side}", L("shin"), 0.0, 0.0, L("foot"))
 
+        # 翅膀：从背部向上外侧展开。设定集要求立绘左右不对称，
+        # 所以两侧给不同的初始角度。
+        add(f"wing_{side}", "chest", L("chest") * 0.55, span_sh * 0.6 * sign,
+            (128.0 if sign > 0 else 46.0), L("wing"))
+        add(f"wing_{side}_02", f"wing_{side}", L("wing"), 0.0,
+            (150.0 if sign > 0 else 26.0), L("wing") * 0.7)
+
+    # 尾巴：从腰后向下垂，两节以便摆动。
+    add("tail_01", "hip", 0.0, 0.0, -125.0, L("tail"))
+    add("tail_02", "tail_01", L("tail"), 0.0, -80.0, L("tail") * 0.9)
+
     return bones
 
 
@@ -121,15 +138,17 @@ def build_skeleton(concept: Concept) -> dict[str, Any]:
     for p in ordered:
         x, y, rot = _attachment_transform(p, unit)
         w, h = p.pixel_size
-        attachments[p.name] = {
-            p.name: {
-                "x": round(x, 4),
-                "y": round(y, 4),
-                "rotation": round(rot, 4),
-                "width": w,
-                "height": h,
-            }
+        entry = {
+            "x": round(x, 4),
+            "y": round(y, 4),
+            "rotation": round(rot, 4),
+            "width": w,
+            "height": h,
         }
+        if p.mirror:
+            # 部件坐标系比骨骼坐标系转了 -90 度，所以"左右翻转"在这里是翻 y
+            entry["scaleY"] = -1
+        attachments[p.name] = {p.name: entry}
 
     return {
         "skeleton": {
