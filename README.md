@@ -72,12 +72,34 @@
 
 ---
 
+---
+
+## Spine 动画自动生成与 SD 换装
+
+设定集不止是文档——`spineforge/` 把它当数据源，自动产出可动的 Spine 角色，
+并用 Stable Diffusion 给同一套骨架换装。配色与头身比直接读 `tools/palettes.json`，
+所以改设定就等于改产出。
+
+```bash
+pip install -r requirements.txt
+python -m spineforge list                 # 看有哪些角色和换装预设
+python -m spineforge run akari field_work # 建模 -> 关键姿势 -> 换装 -> 预览
+```
+
+换装算法移植自 [RedrawSpine](https://github.com/Zhangyangrui916/RedrawSpine)，
+但改写成了纯 numpy 软件渲染，不需要 GPU、Spine 编辑器和 Photoshop。
+详见 [docs/spineforge.md](docs/spineforge.md) 与 [docs/WORKFLOW.md](docs/WORKFLOW.md)。
+
+---
+
 ## 目录结构
 
 ```
 docs/
   kirimicho/           《雾见町 遗物招领所》设定文档
   icarus/              《黄昏之羽》设定文档
+  spineforge.md        Spine 工作流总览
+  WORKFLOW.md          Spine 工作流调参与排查手册
 assets/
   kirimicho/
     proportions.svg    头身比对照图
@@ -90,6 +112,8 @@ assets/
 tools/
   palettes.json        配色与比例数据源（唯一真实来源）
   gen_visuals.py       由 JSON 生成上述 SVG
+concepts/              各角色的 Spine 部件拆分与换装预设
+spineforge/            Spine 骨架/动画生成与 SD 换装流水线
 ```
 
 ## 修改配色

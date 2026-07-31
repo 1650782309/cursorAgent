@@ -7,7 +7,7 @@
 
 | RedrawSpine | 本仓库 | 差异 |
 | --- | --- | --- |
-| `spine2restposepsd.py` + Spine 命令行导出 | `spineforge/skeleton.py`、`spineforge/partgen.py` | 骨架和贴图直接由概念生成，不再需要 Spine 编辑器导出 PSD |
+| `spine2restposepsd.py` + Spine 命令行导出 | `spineforge/bible.py`、`spineforge/skeleton.py`、`spineforge/partgen.py` | 骨架比例由设定集的头身比推出，贴图由概念生成，不再需要 Spine 编辑器导出 PSD |
 | Photoshop 标记重绘 / 不重绘图层 | 概念里的 `redraw` 字段与 outfit 的 `targets` | 不需要 Photoshop，也不需要对比两次导出的 json |
 | `preproccess.py` + analyzer 的 keypose 搜索 | `spineforge/keypose.py` | 算法一致：贪心选"新露出纹素最多"的帧 |
 | `uv_redraw.glsl` | `raster.render_uv` | 同样编码成 `(部件ID << 24) \| 纹素下标`；阈值 0.05 / 0.55 原样保留 |
@@ -27,6 +27,12 @@ ID 图本来就是分片常量的，直接比较相邻像素的 ID 就能得到�
 0 号部件的 0 号纹素编码出来是 0，和"空像素"撞了。这里把 0 留给空和遮挡体。
 
 ## 参数调优
+
+### 换了配色但产出没变
+
+配色只在 `tools/palettes.json` 里维护，概念文件通过 `bible` 引用。
+改完 JSON 要重新 `build`（贴图是那一步生成的），再重新 `reskin`。
+只重跑 `reskin` 不会更新贴图底色。
 
 ### 覆盖率上不去
 
@@ -76,6 +82,19 @@ ID 图本来就是分片常量的，直接比较相邻像素的 ID 就能得到�
 
 配合 `redraw/<换装>/manifest.json` 的 `ids` 表，可以把 `uv.npy` 里任意一个像素
 反查到具体部件和纹素下标。
+
+### 换装破坏了设定集的配色纪律
+
+设定集对某些角色有硬约束：冴"全身只允许存在一处红"，
+伊卡洛斯"只有一种高饱和色，出现位置不得超过 5 处，粉色只允许在头发与浮游羽毛上"。
+守法的做法是两层：
+
+1. 把要锁死的部件标 `redraw: false`（红臂章、胸口宝石、杖尖水晶）。
+   它们照常参与遮挡，但 UV 图里不会出现，SD 碰不到。
+2. 在 outfit 的 `negative_prompt` 里显式压掉违规元素
+   （`pink clothing`、`pure black`、`mechanical wings`、`high saturation`）。
+
+只做第 2 步不够——SD 会把高饱和色抹到相邻部件上，第 1 步才是硬保证。
 
 ## 接入现有 Spine 工程
 
