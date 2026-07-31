@@ -1,0 +1,97 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "_meta": { "title": "UNET" },
+    "inputs": {
+      "unet_name": "flux1-dev.safetensors",
+      "weight_dtype": "fp8_e4m3fn"
+    }
+  },
+  "2": {
+    "class_type": "DualCLIPLoader",
+    "_meta": { "title": "TEXT_ENCODER" },
+    "inputs": {
+      "clip_name1": "t5xxl_fp8_e4m3fn.safetensors",
+      "clip_name2": "clip_l.safetensors",
+      "type": "flux"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "_meta": { "title": "VAE" },
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    }
+  },
+  "4": {
+    "class_type": "CLIPTextEncode",
+    "_meta": { "title": "POSITIVE" },
+    "inputs": {
+      "clip": ["2", 0],
+      "text": "An anime-style character illustration, full body, front view, flat even lighting, plain light grey background."
+    }
+  },
+  "5": {
+    "class_type": "FluxGuidance",
+    "_meta": { "title": "GUIDANCE" },
+    "inputs": {
+      "conditioning": ["4", 0],
+      "guidance": 3.5
+    }
+  },
+  "6": {
+    "class_type": "ConditioningZeroOut",
+    "_meta": { "title": "NEGATIVE_ZERO" },
+    "inputs": {
+      "conditioning": ["4", 0]
+    }
+  },
+  "7": {
+    "class_type": "LoadImage",
+    "_meta": { "title": "INPUT_IMAGE" },
+    "inputs": {
+      "image": "selected_concept.png",
+      "upload": "image"
+    }
+  },
+  "8": {
+    "class_type": "VAEEncode",
+    "_meta": { "title": "ENCODE" },
+    "inputs": {
+      "pixels": ["7", 0],
+      "vae": ["3", 0]
+    }
+  },
+  "9": {
+    "class_type": "KSampler",
+    "_meta": { "title": "SAMPLER" },
+    "inputs": {
+      "model": ["1", 0],
+      "positive": ["5", 0],
+      "negative": ["6", 0],
+      "latent_image": ["8", 0],
+      "seed": 0,
+      "steps": 25,
+      "cfg": 1.0,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 0.5
+    }
+  },
+  "10": {
+    "class_type": "VAEDecode",
+    "_meta": { "title": "DECODE" },
+    "inputs": {
+      "samples": ["9", 0],
+      "vae": ["3", 0]
+    }
+  },
+  "11": {
+    "class_type": "SaveImage",
+    "_meta": { "title": "SAVE" },
+    "inputs": {
+      "images": ["10", 0],
+      "filename_prefix": "concept/refine_flux"
+    }
+  }
+}

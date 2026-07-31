@@ -1,0 +1,18 @@
+# 光照 / lighting
+# 发散阶段建议固定为平光，避免"好看是因为打光好"的误判。
+# 定向后用 IC-Light 或这一维铺氛围比稿。
+
+flat even lighting, no dramatic shadows
+soft diffused daylight
+overcast grey light
+warm afternoon sunlight
+golden hour backlight with rim light
+harsh top light with deep shadows
+single side light, strong chiaroscuro
+cold moonlight
+lantern light from below
+neon signage lighting, magenta and cyan
+firelight flicker from the side
+underwater caustic light
+fog diffused silhouette lighting
+studio three point lighting

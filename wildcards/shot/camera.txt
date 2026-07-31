@@ -1,0 +1,14 @@
+# 镜头 / camera and framing
+# 发散阶段固定为全身正面，收敛阶段才切特写。
+
+full body, front view, straight on
+full body, three quarter view
+full body, side view
+full body, back view
+upper body, three quarter view
+portrait, face close-up
+cowboy shot
+from slightly below, heroic angle
+from slightly above
+detail shot of the hands
+detail shot of the boots and hem

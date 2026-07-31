@@ -1,0 +1,29 @@
+# 材质 / material
+# 材质是最容易被忽略但最能拉开方案差距的一维。
+# 同一套结构换材质，气质会完全不同，做收敛比对时非常有用。
+
+blackened steel with oil sheen
+oxidized copper with green patina
+brushed brass
+polished chrome
+weathered iron with rust bloom
+matte ceramic plating
+carbon fiber weave
+worn leather with creases
+lacquered wood
+raw linen
+heavy wool felt
+embroidered silk brocade
+translucent organza layers
+crushed velvet
+oiled canvas
+chainmail mesh
+bone and horn inlay
+scaled hide
+woven straw and reed
+frosted glass panels
+resin with embedded circuitry
+knitted cable wool
+rubber and neoprene
+paper talismans and washi
+crystalline mineral growth

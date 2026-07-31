@@ -1,0 +1,44 @@
+# 角色身份原型 / archetype
+# 决定第一眼的身份识别。发散时优先扫这一维，撞出意外组合的概率最高。
+# 每行一个条目，# 开头为注释，空行忽略。
+
+knight in ornate armor
+wandering swordsman
+court mage
+battle nun
+shrine maiden
+onmyoji exorcist
+mechanized android girl
+cyber street runner
+sky pirate captain
+airship engineer
+desert nomad ranger
+plague doctor alchemist
+puppeteer with marionettes
+clockwork tinkerer
+beast tamer
+dragon rider
+imperial inquisitor
+rogue assassin
+tea house waitress
+idol singer
+academy honor student
+mad scientist
+bounty hunter
+tomb raider archaeologist
+deep sea diver
+storm caller shaman
+blacksmith apprentice
+librarian archivist
+funeral undertaker
+carnival ringmaster
+noble heir in mourning dress
+mercenary gunslinger
+monster hunter with trophies
+insect keeper entomologist
+weather station observer
+cartographer explorer
+prosthetic limb duelist
+cursed sword bearer
+spirit medium
+frontier doctor

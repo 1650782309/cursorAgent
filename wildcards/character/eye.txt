@@ -1,0 +1,25 @@
+# 眼睛 / eyes
+# 瞳色与瞳孔造型是角色气质的核心，也是后期角色 LoRA 最容易丢失的特征，务必单独设计。
+
+amber eyes
+golden eyes
+crimson eyes
+deep red eyes
+violet eyes
+pale blue eyes
+heterochromia, blue and gold eyes
+heterochromia, red and green eyes
+slit pupils
+cross-shaped pupils
+star-shaped pupils
+ringed pupils
+glowing eyes
+dull grey eyes
+half-closed tired eyes
+sharp tsurime eyes
+gentle tareme eyes
+one eye covered by eyepatch
+mechanical eye with iris shutter
+blindfolded, no visible eyes
+empty white eyes
+gradient iris, teal to yellow

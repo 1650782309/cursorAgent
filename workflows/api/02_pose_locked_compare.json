@@ -1,0 +1,102 @@
+{
+  "1": {
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": { "title": "CHECKPOINT" },
+    "inputs": {
+      "ckpt_name": "illustriousXL.safetensors"
+    }
+  },
+  "2": {
+    "class_type": "CLIPSetLastLayer",
+    "_meta": { "title": "CLIP_SKIP" },
+    "inputs": {
+      "clip": ["1", 1],
+      "stop_at_clip_layer": -2
+    }
+  },
+  "3": {
+    "class_type": "CLIPTextEncode",
+    "_meta": { "title": "POSITIVE" },
+    "inputs": {
+      "clip": ["2", 0],
+      "text": "masterpiece, best quality, 1girl, solo, simple background"
+    }
+  },
+  "4": {
+    "class_type": "CLIPTextEncode",
+    "_meta": { "title": "NEGATIVE" },
+    "inputs": {
+      "clip": ["2", 0],
+      "text": "worst quality, low quality, bad anatomy, bad hands, text, watermark"
+    }
+  },
+  "5": {
+    "class_type": "LoadImage",
+    "_meta": { "title": "CONTROL_IMAGE" },
+    "inputs": {
+      "image": "pose_reference.png",
+      "upload": "image"
+    }
+  },
+  "6": {
+    "class_type": "ControlNetLoader",
+    "_meta": { "title": "CONTROLNET" },
+    "inputs": {
+      "control_net_name": "controlnet-openpose-sdxl.safetensors"
+    }
+  },
+  "7": {
+    "class_type": "ControlNetApplyAdvanced",
+    "_meta": { "title": "CONTROLNET_APPLY" },
+    "inputs": {
+      "positive": ["3", 0],
+      "negative": ["4", 0],
+      "control_net": ["6", 0],
+      "image": ["5", 0],
+      "strength": 0.85,
+      "start_percent": 0.0,
+      "end_percent": 0.75
+    }
+  },
+  "8": {
+    "class_type": "EmptyLatentImage",
+    "_meta": { "title": "LATENT" },
+    "inputs": {
+      "width": 832,
+      "height": 1216,
+      "batch_size": 1
+    }
+  },
+  "9": {
+    "class_type": "KSampler",
+    "_meta": { "title": "SAMPLER" },
+    "inputs": {
+      "model": ["1", 0],
+      "positive": ["7", 0],
+      "negative": ["7", 1],
+      "latent_image": ["8", 0],
+      "seed": 0,
+      "steps": 26,
+      "cfg": 5.0,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 1.0
+    }
+  },
+  "10": {
+    "class_type": "VAEDecode",
+    "_meta": { "title": "DECODE" },
+    "inputs": {
+      "samples": ["9", 0],
+      "vae": ["1", 2]
+    }
+  },
+  "11": {
+    "class_type": "SaveImage",
+    "_meta": { "title": "SAVE" },
+    "inputs": {
+      "images": ["10", 0],
+      "filename_prefix": "concept/compare"
+    }
+  }
+}

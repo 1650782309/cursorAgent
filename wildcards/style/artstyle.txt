@@ -1,0 +1,19 @@
+# 画风倾向 / art style direction
+# 用于探索项目美术风格方向。定稿后应固定为一条，并考虑训练画风 LoRA 固化。
+# 不要写具体画师名，改用可描述的风格特征，便于团队沟通和长期维护。
+
+clean lineart, flat cel shading
+thick outlines, bold cel shading
+soft airbrush shading, minimal lines
+painterly rendering, visible brush strokes
+watercolor wash with paper texture
+gouache poster style, limited palette
+ink wash with sumi-e texture
+retro anime, 1990s cel look
+modern gacha illustration, high detail rendering
+webtoon style, light shading
+thin delicate lineart, pale colors
+high contrast graphic style, screen tone
+storybook illustration, textured
+concept art style, rough and gestural
+material study render, high fidelity textures

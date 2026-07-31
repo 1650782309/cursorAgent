@@ -1,0 +1,24 @@
+# 姿势 / pose
+# 注意：做方案比对时不要随机这一维，改用 ControlNet 锁死同一姿势（workflows 02）。
+# 这一维用于定向后的动作提案铺量。
+
+standing straight, arms at sides, T-pose reference
+standing at ease, weight on one leg
+contrapposto standing pose
+walking forward
+mid stride running
+crouching low
+kneeling on one knee
+sitting on the ground, knees up
+sitting on a crate
+leaning against a wall
+arms crossed
+hands on hips
+drawing a weapon
+weapon resting on the shoulder
+reaching out with one hand
+looking back over the shoulder
+adjusting a glove
+holding a lantern up
+mid swing attack
+guard stance, weapon raised

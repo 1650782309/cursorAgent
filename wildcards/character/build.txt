@@ -1,0 +1,14 @@
+# 体型与年龄感 / build and age impression
+# 用于控制比例基调。比例一旦定了就要在整组比稿里保持一致，否则方案不可比。
+
+petite frame, small stature
+slender tall frame
+athletic toned build
+broad shouldered
+lanky long limbed
+sturdy stocky build
+child-like proportions, large head ratio
+teenage proportions
+young adult proportions
+mature adult proportions
+elderly, wrinkled hands
