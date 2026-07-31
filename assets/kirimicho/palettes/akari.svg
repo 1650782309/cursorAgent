@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="718" viewBox="0 0 620 718" role="img" aria-label="天野 灯莉 / Amano Akari 配色卡">
+<rect width="620" height="718" fill="#FBFAF7"/>
+<rect x="0" y="0" width="8" height="718" fill="#E8703A"/>
+<text x="32" y="46" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="24" font-weight="700" fill="#2A2530">天野 灯莉 / Amano Akari</text>
+<text x="32" y="70" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#8A8580">第三代招领人 · 156cm · 6.8 头身</text>
+<text x="588" y="46" text-anchor="end" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#8A8580">COLOR SETTING</text>
+<line x1="32" y1="82" x2="588" y2="82" stroke="#DCD8D2" stroke-width="1"/>
+<text x="32" y="110" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="600" fill="#2A2530">头发 Hair</text>
+<rect x="32" y="122" width="96" height="72" rx="4" fill="#E8703A" stroke="#DCD8D2" stroke-width="1"/>
+<text x="42" y="148" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#FFFFFF">#E8703A</text>
+<text x="42" y="168" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#FFFFFF" opacity="0.85">底色</text>
+<rect x="138" y="122" width="96" height="72" rx="4" fill="#B84E27" stroke="#DCD8D2" stroke-width="1"/>
+<text x="148" y="148" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#FFFFFF">#B84E27</text>
+<text x="148" y="168" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#FFFFFF" opacity="0.85">1 影</text>
+<rect x="244" y="122" width="96" height="72" rx="4" fill="#FFA168" stroke="#DCD8D2" stroke-width="1"/>
+<text x="254" y="148" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#2A2530">#FFA168</text>
+<text x="254" y="168" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#2A2530" opacity="0.85">高光</text>
+<text x="32" y="228" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="600" fill="#2A2530">瞳 Eye</text>
+<rect x="32" y="240" width="96" height="72" rx="4" fill="#F2A83B" stroke="#DCD8D2" stroke-width="1"/>
+<text x="42" y="266" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#2A2530">#F2A83B</text>
+<text x="42" y="286" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#2A2530" opacity="0.85">底色</text>
+<rect x="138" y="240" width="96" height="72" rx="4" fill="#C4761E" stroke="#DCD8D2" stroke-width="1"/>
+<text x="148" y="266" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#FFFFFF">#C4761E</text>
+<text x="148" y="286" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#FFFFFF" opacity="0.85">1 影</text>
+<rect x="244" y="240" width="96" height="72" rx="4" fill="#FFF3D6" stroke="#DCD8D2" stroke-width="1"/>
+<text x="254" y="266" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#2A2530">#FFF3D6</text>
+<text x="254" y="286" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#2A2530" opacity="0.85">高光</text>
+<text x="32" y="346" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="600" fill="#2A2530">肤 Skin</text>
+<rect x="32" y="358" width="96" height="72" rx="4" fill="#FBE0CE" stroke="#DCD8D2" stroke-width="1"/>
+<text x="42" y="384" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#2A2530">#FBE0CE</text>
+<text x="42" y="404" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#2A2530" opacity="0.85">底色</text>
+<rect x="138" y="358" width="96" height="72" rx="4" fill="#EFBDA4" stroke="#DCD8D2" stroke-width="1"/>
+<text x="148" y="384" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#2A2530">#EFBDA4</text>
+<text x="148" y="404" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#2A2530" opacity="0.85">1 影</text>
+<rect x="244" y="358" width="96" height="72" rx="4" fill="#F2A78F" stroke="#DCD8D2" stroke-width="1"/>
+<text x="254" y="384" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#2A2530">#F2A78F</text>
+<text x="254" y="404" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#2A2530" opacity="0.85">红晕</text>
+<text x="32" y="464" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="600" fill="#2A2530">服装 Costume</text>
+<rect x="32" y="476" width="96" height="72" rx="4" fill="#2C3E63" stroke="#DCD8D2" stroke-width="1"/>
+<text x="42" y="502" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#FFFFFF">#2C3E63</text>
+<text x="42" y="522" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#FFFFFF" opacity="0.85">制服</text>
+<rect x="138" y="476" width="96" height="72" rx="4" fill="#1C2845" stroke="#DCD8D2" stroke-width="1"/>
+<text x="148" y="502" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#FFFFFF">#1C2845</text>
+<text x="148" y="522" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#FFFFFF" opacity="0.85">制服影</text>
+<rect x="244" y="476" width="96" height="72" rx="4" fill="#35547E" stroke="#DCD8D2" stroke-width="1"/>
+<text x="254" y="502" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#FFFFFF">#35547E</text>
+<text x="254" y="522" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#FFFFFF" opacity="0.85">半纏</text>
+<rect x="350" y="476" width="96" height="72" rx="4" fill="#22395A" stroke="#DCD8D2" stroke-width="1"/>
+<text x="360" y="502" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#FFFFFF">#22395A</text>
+<text x="360" y="522" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#FFFFFF" opacity="0.85">半纏影</text>
+<rect x="456" y="476" width="96" height="72" rx="4" fill="#F2F5F8" stroke="#DCD8D2" stroke-width="1"/>
+<text x="466" y="502" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#2A2530">#F2F5F8</text>
+<text x="466" y="522" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#2A2530" opacity="0.85">家纹</text>
+<text x="32" y="582" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="600" fill="#2A2530">点缀 Accent</text>
+<rect x="32" y="594" width="96" height="72" rx="4" fill="#D64545" stroke="#DCD8D2" stroke-width="1"/>
+<text x="42" y="620" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#FFFFFF">#D64545</text>
+<text x="42" y="640" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#FFFFFF" opacity="0.85">领巾</text>
+<rect x="138" y="594" width="96" height="72" rx="4" fill="#C9A227" stroke="#DCD8D2" stroke-width="1"/>
+<text x="148" y="620" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#FFFFFF">#C9A227</text>
+<text x="148" y="640" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#FFFFFF" opacity="0.85">钥匙</text>
+<rect x="244" y="594" width="96" height="72" rx="4" fill="#FFC46B" stroke="#DCD8D2" stroke-width="1"/>
+<text x="254" y="620" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="600" fill="#2A2530">#FFC46B</text>
+<text x="254" y="640" font-family="'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC','PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#2A2530" opacity="0.85">灯笼光</text>
+</svg>

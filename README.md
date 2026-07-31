@@ -1,176 +1,106 @@
-# spineforge
+# 角色设定集
 
-由**角色概念库**驱动的 Spine 动画自动生成 + Stable Diffusion 换装工作流。
+> キャラクターデザイン資料集 / Character Design Bibles
 
-一个角色只需要一份 YAML 概念文件，就能自动产出：一整套 attachment 贴图、
-一份可导入 Spine 编辑器的 `skeleton.json`（含程序化生成的 idle / walk / run / wave / cast 等动画），
-以及任意套数的 AI 重绘换装贴图。
+原创动画与游戏角色的设定集合。目前收录两个**互不相关**的企划，
+世界观独立；**作画基线统一**为现代 TV 动画赛璐璐（硬边阴影、锐利线稿、扁平色块）。
 
-换装部分的算法移植自 [RedrawSpine](https://github.com/Zhangyangrui916/RedrawSpine)：
-建立**贴图 UV ↔ 画面像素**的映射，在多个关键姿势上分别重绘，再把结果沿映射写回 attachment。
-原实现是 OpenGL + CUDA 的 C++ analyzer，依赖 Spine 编辑器和 Photoshop；
-这里全部改写成 numpy 软件渲染，**不需要 GPU、Spine 编辑器和 Photoshop 也能跑通全流程**。
-
----
-
-## 快速开始
-
-```bash
-pip install -r requirements.txt
-
-python -m spineforge list                                   # 看看概念库里有谁
-python -m spineforge run aria_mage starlight_robe           # 一条龙：建模 -> 预处理 -> 换装 -> 预览
-```
-
-产物在 `build/aria_mage/skins/starlight_robe_0/`：`images/` 是新贴图，
-`preview/` 是各动画 GIF 和关键姿势对照图，`steps/` 是逐姿势的中间图（底图 / mask / canny / 重绘结果）。
-
-上面用的是**离线 mock 后端**，不需要显卡。要接真正的 SD：
-
-```bash
-# 先启动 Stable Diffusion WebUI（带 --api 与 ControlNet 扩展）
-python -m spineforge reskin aria_mage starlight_robe --seed 12345 --backend webui --preview
-```
+| 企划 | 媒体 | 画风 | 角色数 | 入口 |
+| --- | --- | --- | --- | --- |
+| 《雾见町 遗物招领所》 | 深夜档 TV 动画（12 话） | TV 动画赛璐璐 | 4 | [docs/kirimicho](docs/kirimicho/00-世界观设定.md) |
+| 《黄昏之羽》 | TV 动画（1 クール 想定） | TV 动画赛璐璐（与左共通） | 1 | [docs/icarus](docs/icarus/00-企划与世界观.md) |
 
 ---
 
-## 流水线
+## 企划一 ·《雾见町 遗物招领所》
 
-```
-concepts/<角色>.yaml
-        │
-        ├── build ─────────► build/<角色>/images/*.png      每个部件一张贴图
-        │                    build/<角色>/skeleton.json     骨架 + 全部动画
-        │                    build/<角色>/images/fake.atlas
-        │
-        ├── preprocess ────► build/<角色>/redraw/<换装>/
-        │                      restPose.uv.npy   UV 映射（部件ID<<24 | 纹素下标）
-        │                      restPose@mask.png inpaint 遮罩
-        │                      restPose@ctrl.png 分组 ID 图
-        │                      restPose@canny.png ControlNet 输入
-        │                      manifest.json     姿势序列 / ID 表 / 覆盖率
-        │
-        ├── reskin ────────► build/<角色>/skins/<换装>_<seed>/
-        │                      images/  换装后的整套贴图
-        │                      steps/   逐姿势中间图
-        │                      report.json
-        │
-        └── preview ───────► GIF + 关键姿势对照图
-```
+被人遗忘的物品会在夜雾中长出形体。少女继承了祖母的"遗物招领所"，
+把它们送回主人手中——或者，替它们好好地送终。
 
-### 1. build
+![头身比对照](assets/kirimicho/proportions.svg)
 
-按 `rig` 里的比例摆出人形骨架，按 `parts` 生成贴图并挂到对应骨骼上，
-再按 `animations` 列表生成动画时间轴。动画是解析式的（正弦摆动、缓动抬手等）
-在关键帧上采样出来的，采样点之间用线性插值，因此导出的 JSON 在 Spine 编辑器里
-播放和在本仓库运行时里播放完全一致。
-
-这一步还会扫描全部动画的包围盒，画布兜不住时给出告警——超出画布的部分不会参与重绘。
-
-### 2. preprocess：为什么要选关键姿势
-
-一张 attachment 贴图上的纹素，在正面站姿里往往只露出一部分：手臂内侧、裙子背面、
-被躯干挡住的袖子。只重绘一张正面图，这些纹素永远是空白。
-
-所以要贪心地找姿势：先把 rest pose 能看到的纹素全部标记为"已画"，
-然后遍历所有动画的所有采样时刻，挑出**还没画过的纹素露出最多**的那一帧，
-加进序列并同样标记，如此反复，直到某一轮的新增收益低到不值得再做一次 SD 推理。
-
-`manifest.json` 里的 `coverage` 会告诉你每个部件被覆盖了多少。
-覆盖率低的部件说明现有动画根本没展示过它，需要美术补一个展示姿势，
-否则那块贴图只能靠邻域扩散猜颜色。
-
-### 3. reskin：逐姿势重绘并回写
-
-```
-洗白待重绘的 attachment
-   │
-   ├─ 姿势 0：拿原始贴图的 rest pose 渲染当底图，整体 inpaint
-   │     └─ 沿 UV 映射把结果写回 attachment
-   │
-   ├─ 姿势 i：拿"已经画了一部分"的 attachment 渲染出这一帧
-   │     ├─ mask = 这一帧里还没画过的纹素
-   │     ├─ canny = 分组 ID 图的边界，作为 ControlNet 输入锁形状
-   │     └─ 局部 inpaint -> 回写
-   │
-   └─ 收尾：仍未被覆盖的纹素用邻域颜色扩散填充
-```
-
-回写这一步有两个约束，少一个贴图就会脏：
-
-**边缘像素不能写回。** 落在部件轮廓上的像素混了旁边部件甚至背景的颜色，
-写回去会在贴图边缘糊出脏边。判据在 HSV 空间做——SD 输出的同一块布料常有明度渐变
-但色相稳定，用 RGB 判据会把正常的受光面误判成边界。
-
-**同一个纹素只写第一次。** 一个纹素可能在好几个姿势里都可见，
-反复覆盖会让颜色在多轮之后逐渐漂移。
-
-### 4. preview
-
-用任意一套贴图渲染动画 GIF 和关键姿势对照图，用来确认换装后动起来没有穿帮。
-
----
-
-## 常用命令
-
-| 命令 | 作用 |
+| 文档 | 内容 |
 | --- | --- |
-| `spineforge list` | 列出概念库 |
-| `spineforge show <角色>` | 查看部件表、绘制顺序、哪些部件保形 |
-| `spineforge build [角色\|all]` | 生成贴图 + 骨架 + 动画 |
-| `spineforge preprocess <角色> --outfit <换装>` | 选关键姿势，看覆盖率 |
-| `spineforge reskin <角色> <换装> --seed N --backend mock\|webui` | 换装 |
-| `spineforge preview <角色> [--images 目录]` | 渲染 GIF 与对照图 |
-| `spineforge run <角色> <换装>` | 以上四步一条龙 |
+| [00 世界观设定](docs/kirimicho/00-世界观设定.md) | 舞台雾见町、遗物灵的三条法则、阵营对立、设计统一约束 |
+| [01 天野 灯莉](docs/kirimicho/01-角色-天野灯莉.md) | 主角。16 岁，第三代招领人，能听见物品的记忆 |
+| [02 墨](docs/kirimicho/02-角色-墨.md) | 搭档。招领所的守护猫灵，活了 240 年以上 |
+| [03 时雨 冴](docs/kirimicho/03-角色-时雨冴.md) | 对手役。回收局执行官，主张即刻销毁遗物灵 |
+| [04 帆坂 忍](docs/kirimicho/04-角色-帆坂忍.md) | 配角。滞留 10 年的孩童灵，全剧最大的伏笔 |
+| [05 作画规范](docs/kirimicho/05-作画规范.md) | 头身比、脸部基准、线稿粗细、赛璐璐 7 层上色、提交检查表 |
+| [06 关系图与剧情钩子](docs/kirimicho/06-关系图与剧情钩子.md) | 关系图、三组情感对照、伏笔清单、12 话构成 |
+| [07 立绘生成提示词](docs/kirimicho/07-立绘生成提示词.md) | 四名角色 + 主视觉的出图提示词 |
 
-批量出图就是循环 seed：
+| 角色 | 年龄 | 身高 / 头身 | 主色 | 剪影识别点 |
+| --- | --- | --- | --- | --- |
+| 天野 灯莉 | 16 | 156 cm / 6.8 | `#E8703A` | 半纏 + 呆毛 + 纸灯笼 |
+| 墨 | 外观 17 | 178 cm / 7.5 | `#23222A` | 猫耳 + 尾巴 + 袖手姿势 |
+| 时雨 冴 | 19 | 171 cm / 7.8 | `#E4E7EE` | 高马尾 + 大衣下摆 + 伞枪 |
+| 帆坂 忍 | 12 | 142 cm / 5.5 | `#F5C93F` | 雨衣尖帽 + 旧书包 |
 
-```bash
-for s in $(seq 100 130); do
-  python -m spineforge reskin aria_mage crimson_ritual --seed $s --backend webui --no-steps
-done
-```
+| | |
+| --- | --- |
+| ![灯莉](assets/kirimicho/palettes/akari.svg) | ![墨](assets/kirimicho/palettes/sumi.svg) |
+| ![冴](assets/kirimicho/palettes/sae.svg) | ![忍](assets/kirimicho/palettes/shinobu.svg) |
 
----
+按 [07 立绘生成提示词](docs/kirimicho/07-立绘生成提示词.md) 生成的概念立绘（3:4，设定稿风格），非最终作画稿：
 
-## 配置
-
-`spineforge/config.py` 里的每个字段都能用 `SPINEFORGE_<大写字段名>` 环境变量覆盖：
-
-```bash
-export SPINEFORGE_SD_HOST=192.168.1.20
-export SPINEFORGE_SD_MODEL="meinapastel_v6Pastel.safetensors"
-export SPINEFORGE_DOWNSCALE=2          # 送进 SD 前的降采样倍数，越大越省显存
-export SPINEFORGE_DENOISING_STRENGTH=0.72
-export SPINEFORGE_KEYPOSE_MAX_COUNT=8  # 最多选几个关键姿势
-```
-
-几个容易踩的点：
-
-* 画布宽高必须是 `8 * downscale` 的倍数。不是的话 SD 会自行 padding，
-  返回的图和 mask 差几个像素，UV 回写就整体错位了。
-* WebUI 后端固定用 `inpaint_full_res=False`。开启后 WebUI 会先裁剪再缩放回来，
-  结果和 mask 对不上。这是 RedrawSpine 踩过的坑，这里沿用它的结论。
-* `inpainting_fill=1`（潜空间噪声）。洗白后的底图是纯白，用原图填充 SD 画不出东西。
+| 天野 灯莉 | 墨 | 时雨 冴 | 帆坂 忍 |
+| --- | --- | --- | --- |
+| ![灯莉](assets/kirimicho/concepts/akari.png) | ![墨](assets/kirimicho/concepts/sumi.png) | ![冴](assets/kirimicho/concepts/sae.png) | ![忍](assets/kirimicho/concepts/shinobu.png) |
 
 ---
 
-## 新增一个角色
+## 企划二 ·《黄昏之羽》
 
-1. 抄一份 `concepts/aria_mage.yaml` 改名，字段含义见 [`concepts/_schema.md`](concepts/_schema.md)。
-2. `python -m spineforge build <新角色> && python -m spineforge preview <新角色>`，
-   看对照图确认部件位置对不对。
-3. 把脸、瞳孔、头发这类要保形的部件标上 `redraw: false`——它们会作为遮挡体参与渲染，
-   但不会被 SD 改动。
-4. 把会被误判成接缝的部件分组写进 `groups`。例如长筒靴拆成大腿/小腿/脚三块时，
-   不分组的话 canny 会在膝盖和脚踝画出横线，重绘后关节看起来是"断开"的。
-5. `python -m spineforge preprocess <新角色> --outfit <换装>` 看覆盖率，偏低就补动画。
+悬停在恒定黄昏中的浮空都市。背生羽翼的"羽者"每使用一次力量，
+就会永久失去一部分羽毛——飘散在她身边的粉色羽毛，是正在流失的寿命。
 
-## 开发
+| 文档 | 内容 |
+| --- | --- |
+| [00 企划与世界观](docs/icarus/00-企划与世界观.md) | 天层都市艾莉西恩、羽者的三条法则、企划定位 |
+| [01 伊卡洛斯](docs/icarus/01-角色-伊卡洛斯.md) | 主角。第七位羽者「黄昏之羽」，完整设定表 |
+| [02 提示词集](docs/icarus/02-提示词集.md) | 模块化的中英双语出图提示词、参数建议、失败修补词 |
+| [03 企划共通规范](docs/icarus/03-企划共通规范.md) | 画风基线、光照规则、材质表现、后续角色的视觉公约 |
 
-```bash
-python -m pytest tests -q
+![伊卡洛斯配色卡](assets/icarus/palettes/icarus.svg)
+
+| 概念立绘（TV 赛璐璐 · 白底网格） |
+| --- |
+| ![伊卡洛斯](assets/icarus/concepts/icarus-keyvisual.png) |
+
+参考图与生成的立绘请存入 `assets/icarus/refs/` 与 `assets/icarus/concepts/`。
+
+---
+
+## 目录结构
+
+```
+docs/
+  kirimicho/           《雾见町 遗物招领所》设定文档
+  icarus/              《黄昏之羽》设定文档
+assets/
+  kirimicho/
+    proportions.svg    头身比对照图
+    palettes/*.svg     各角色配色卡
+    concepts/*.png     示例立绘（概念稿）
+  icarus/
+    palettes/*.svg     各角色配色卡
+    refs/              用户提供的原始参考图
+    concepts/          生成的立绘与设定稿
+tools/
+  palettes.json        配色与比例数据源（唯一真实来源）
+  gen_visuals.py       由 JSON 生成上述 SVG
 ```
 
-测试覆盖概念校验、骨架/动画生成、UV 映射与回写的逐像素往返，
-以及用 mock 后端跑完整条流水线的冒烟测试。全部离线，不需要 SD。
+## 修改配色
+
+色号与头身比只在 `tools/palettes.json` 中维护，改完后重新生成 SVG：
+
+```bash
+python3 tools/gen_visuals.py
+```
+
+脚本只依赖 Python 3 标准库，无需安装第三方包。
+新增企划时，在 `tools/palettes.json` 的 `works` 下加一个条目即可，
+输出路径会自动变为 `assets/<企划 id>/`。修改身高或头身比时，
+请同步更新对应角色的设定文档。
