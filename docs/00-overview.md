@@ -55,6 +55,7 @@
 | [05-assets.md](05-assets.md) | 资源与 AssetBundle 管线分析 |
 | [06-learning-loop.md](06-learning-loop.md) | 怎么把逆向结果变成自己的技术积累 |
 | [07-legal.md](07-legal.md) | 合规边界，先读这个 |
+| [08-extract-models.md](08-extract-models.md) | 可播放 FBX 提取与人物/物品/场景自动分类 |
 
 ## 配套 CLI
 

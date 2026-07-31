@@ -160,7 +160,7 @@ class PlanTest(unittest.TestCase):
 
 class InventoryTest(unittest.TestCase):
     def test_file_level_scan_always_works(self):
-        with TemporaryDirectory() as td:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as td:
             game = make_il2cpp_game(Path(td) / "g")
             inv = inv_mod.scan(open_source(game))
             self.assertTrue(inv.containers)

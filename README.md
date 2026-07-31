@@ -26,10 +26,13 @@ urecon init targets/foo --source /games/Foo
 urecon fingerprint targets/foo        # 它是什么
 urecon plan        targets/foo        # 针对它该怎么做
 urecon inventory   targets/foo        # 资源与打包策略
+urecon extract     targets/foo --format fbx   # 模型/动画，按人物·物品·场景分类
 urecon report      targets/foo        # 汇总成报告
 ```
 
 `plan` 的输出是随目标变化的：Mono 项目不会让你去跑 Il2CppDumper，metadata 加密时会直接把你导向运行时内存 dump，检测到 HybridCLR 会提醒你真正的逻辑在热更 DLL 里。
+
+模型提取默认追求**可播放 FBX**，需安装 AssetStudio（`urecon doctor` 可检查）；没有时会降级为 OBJ 并仍完成自动分类。详见 [docs/08-extract-models.md](docs/08-extract-models.md)。
 
 不建工作区也能直接看：
 
@@ -59,6 +62,7 @@ targets/    每个逆向目标一个工作区（已 gitignore，不入库）
 | [资源管线](docs/05-assets.md) | 分包、压缩、贴图格式、加密 bundle |
 | [学习闭环](docs/06-learning-loop.md) | 报告模板与最小复现 |
 | [合规边界](docs/07-legal.md) | 红线与实操约定 |
+| [模型提取](docs/08-extract-models.md) | 可播放 FBX + 人物/物品/场景分类 |
 
 ## 测试
 

@@ -16,10 +16,22 @@ pip install -e "tools/[assets]"      # 加上 UnityPy，解锁对象级资源清
 urecon init targets/foo --source /games/Foo   # 建工作区
 urecon fingerprint targets/foo                # 版本 / 后端 / 框架 / 保护
 urecon inventory   targets/foo                # 容器与对象清点，出 CSV
+urecon extract     targets/foo --format fbx   # 模型/动画 → 人物·物品·场景
+urecon doctor                                 # 检查 AssetStudio / UnityPy
 urecon plan        targets/foo                # 针对该目标的下一步工具流
 urecon report      targets/foo                # 汇总 Markdown 报告
 urecon compare     targets/*/urecon.json      # 多目标横向对比
 ```
+
+可播放 FBX 需要外部工具（UnityPy 只能出 OBJ）。安装 AssetStudio 后：
+
+```bash
+# Windows PowerShell
+$env:URECON_ASSETSTUDIO = "D:\tools\AssetStudio\AssetStudio.CLI.exe"
+urecon extract targets/foo --format fbx
+```
+
+分类规则与降级策略见 [../docs/08-extract-models.md](../docs/08-extract-models.md)。
 
 `fingerprint` 和后续命令都能直接接受原始游戏目录或 APK，不建工作区也能跑：
 

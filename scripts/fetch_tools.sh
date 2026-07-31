@@ -27,6 +27,7 @@ need unzip
 TOOLS=(
   "Perfare/Il2CppDumper|net8|Il2CppDumper"
   "Perfare/AssetStudio|net8|AssetStudio"
+  "aelurum/AssetStudio|cli|AssetStudioCLI"
   "AssetRipper/AssetRipper|linux_x64|AssetRipper"
   "SamboyCoding/Cpp2IL|Linux|Cpp2IL"
   "icsharpcode/ILSpy|ilspycmd|ILSpy"
@@ -69,6 +70,12 @@ cat <<'EOF'
   Frida              pip install frida-tools，移动端还需 push frida-server
   RenderDoc          抓帧看渲染管线
   mitmproxy          pip install mitmproxy
+
+可播放 FBX：
+  优先用 AssetStudio / AssetStudioMod CLI（上面已尝试下载）
+  设置环境变量后验证：
+    export URECON_ASSETSTUDIO=/path/to/AssetStudio.CLI
+    urecon doctor
 
 Python 侧：
   pip install -e tools/[assets]

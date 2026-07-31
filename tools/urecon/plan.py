@@ -115,6 +115,17 @@ def build(fp: Fingerprint, target: str = "<target>") -> list[Step]:
     ))
 
     steps.append(Step(
+        "提取模型与动画（可播放 FBX + 自动分类）",
+        "按人物/物品/场景归档，学习角色绑定、动画拆分与场景拼装；可播放 FBX 依赖 AssetStudio。",
+        [
+            "urecon doctor",
+            f"urecon extract {target} --format fbx",
+            "# 产出在 extracted/models/{人物,物品,场景,...}/",
+        ],
+        "未装 AssetStudio 时会降级为 OBJ+动画 JSON，装好后设 URECON_ASSETSTUDIO 再跑一次即可。详见 docs/08-extract-models.md。",
+    ))
+
+    steps.append(Step(
         "运行时观测",
         "静态看结构，动态看行为。DontDestroyOnLoad 下的对象树基本等于对方的全局架构图。",
         (

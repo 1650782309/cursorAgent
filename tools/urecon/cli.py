@@ -7,6 +7,8 @@ import json
 import sys
 from pathlib import Path
 
+from . import exporters as exp_mod
+from . import extract as extract_mod
 from . import fingerprint as fp_mod
 from . import inventory as inv_mod
 from . import plan as plan_mod
@@ -201,6 +203,68 @@ def cmd_compare(args) -> int:
     return 0
 
 
+def cmd_extract(args) -> int:
+    ws = ws_mod.resolve(args.target)
+    src = open_source(ws.source)
+    version = args.unity_version
+    if not version:
+        try:
+            version = _load_fp(ws, deep=False, refresh=False).unity_version
+        except Exception:
+            version = None
+
+    outdir = Path(args.output) if args.output else ws.dir("extracted")
+    fmt = "classify-only" if args.classify_only else args.format
+    report = extract_mod.extract(
+        src,
+        outdir,
+        unity_version=version,
+        format=fmt,
+        max_containers=args.max_containers,
+        prefer=args.exporter,
+        vendor_dir=Path(args.vendor) if args.vendor else None,
+    )
+
+    _echo(f"后端      {report.backend}"
+          + (f"  ({report.exporter_path})" if report.exporter_path else ""))
+    _echo(f"提取      {len(report.items)} 项")
+    if report.counts:
+        _echo("分类:")
+        from .classify import CATEGORY_DIRS
+        for key, label in CATEGORY_DIRS.items():
+            n = report.counts.get(key, 0)
+            if n:
+                _echo(f"  {label:<6} {n}")
+    for n in report.notes[:8]:
+        _echo(f"! {n}")
+    for e in report.errors[:5]:
+        _echo(f"× {e}")
+    _echo(f"清单      {outdir / 'models' / '_index.json'}")
+    _echo(f"摘要      {outdir / 'models' / '_summary.md'}")
+
+    if args.format == "fbx" and report.backend not in {"assetstudio"}:
+        _echo("")
+        _echo("可播放 FBX 需要 AssetStudio：")
+        _echo("  1) bash scripts/fetch_tools.sh   # 或手动下载到 vendor/")
+        _echo("  2) set URECON_ASSETSTUDIO=<AssetStudio.CLI 路径>")
+        _echo("  3) urecon extract <target> --format fbx")
+        return 0 if report.items else 1
+    return 0
+
+
+def cmd_doctor(args) -> int:
+    exp = exp_mod.discover(Path(args.vendor) if args.vendor else None)
+    _echo(f"FBX 导出器: {exp.kind}" + (f" @ {exp.path}" if exp.path else " （未找到）"))
+    for n in exp.notes:
+        _echo(f"  - {n}")
+    try:
+        import UnityPy  # noqa: F401
+        _echo("UnityPy:    已安装")
+    except Exception:
+        _echo("UnityPy:    未安装（pip install UnityPy）")
+    return 0 if exp.available else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="urecon",
@@ -210,6 +274,7 @@ def build_parser() -> argparse.ArgumentParser:
                "  urecon init targets/foo --source /games/Foo\n"
                "  urecon fingerprint targets/foo\n"
                "  urecon inventory targets/foo\n"
+               "  urecon extract   targets/foo --format fbx\n"
                "  urecon plan targets/foo\n"
                "  urecon report targets/foo\n"
                "  urecon compare targets/*/urecon.json\n",
@@ -255,6 +320,23 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("states", nargs="+", help="若干 urecon.json / fingerprint.json")
     s.add_argument("-o", "--output")
     s.set_defaults(func=cmd_compare)
+
+    s = sub.add_parser("extract", help="提取模型/动画并按人物·物品·场景分类")
+    s.add_argument("target")
+    s.add_argument("-o", "--output", help="输出目录，默认 <workspace>/extracted")
+    s.add_argument("--format", choices=("fbx", "obj"), default="fbx",
+                   help="fbx=可播放（需 AssetStudio）；obj=降级网格+动画摘要")
+    s.add_argument("--exporter", choices=("auto", "assetstudio", "assetripper", "obj"),
+                   default="auto", help="FBX 导出后端")
+    s.add_argument("--classify-only", action="store_true", help="只做分类，不导出网格")
+    s.add_argument("--max-containers", type=int, default=400)
+    s.add_argument("--unity-version", help="UnityPy fallback 版本")
+    s.add_argument("--vendor", help="外部工具所在目录，默认 ./vendor")
+    s.set_defaults(func=cmd_extract)
+
+    s = sub.add_parser("doctor", help="检查 FBX 导出器与 UnityPy 是否可用")
+    s.add_argument("--vendor", help="外部工具所在目录")
+    s.set_defaults(func=cmd_doctor)
     return p
 
 
