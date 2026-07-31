@@ -39,6 +39,14 @@
 | ![灯莉](assets/palettes/akari.svg) | ![墨](assets/palettes/sumi.svg) |
 | ![冴](assets/palettes/sae.svg) | ![忍](assets/palettes/shinobu.svg) |
 
+## 示例立绘
+
+按 [07 立绘生成提示词](docs/07-立绘生成提示词.md) 生成的概念立绘（3:4，设定稿风格），非最终作画稿：
+
+| 天野 灯莉 | 墨 | 时雨 冴 | 帆坂 忍 |
+| --- | --- | --- | --- |
+| ![灯莉](assets/concepts/akari.png) | ![墨](assets/concepts/sumi.png) | ![冴](assets/concepts/sae.png) | ![忍](assets/concepts/shinobu.png) |
+
 ---
 
 ## 目录结构
@@ -48,6 +56,7 @@ docs/                  设定文档（Markdown）
 assets/
   proportions.svg      头身比对照图
   palettes/*.svg       各角色配色卡
+  concepts/*.png       示例立绘（概念稿）
 tools/
   palettes.json        配色数据源（唯一真实来源）
   gen_visuals.py       由 JSON 生成上述 SVG
