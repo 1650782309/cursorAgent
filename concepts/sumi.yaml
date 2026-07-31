@@ -1,0 +1,102 @@
+# 墨 —— 《雾见町 遗物招领所》搭档
+# 设定：docs/kirimicho/02-角色-墨.md
+# 剪影识别点：猫耳 + 尾巴 + 袖手姿势
+id: sumi
+bible: kirimicho/sumi
+archetype: 守护猫灵
+
+canvas:
+  width: 448
+  height: 576
+  origin_x: 232
+  origin_y: 520
+
+# 设定集给的顺序：作务衣 / 1 影 / 腰带
+aliases:
+  samue: costume
+  samue_shadow: costume_2
+  obi: costume_3
+  ear_inner: accent      # 猫耳内侧
+  spirit_glow: accent_2  # 灵纹光
+  streak: hair_4         # 额前挑染的白色发丝
+  eye_gold: eye          # 左·金
+  eye_teal: eye_3        # 右·青碧
+
+palette:
+  geta: "#191821"        # 黑木屐
+
+animations: [idle, breath, walk, run, wave, cast]
+
+groups:
+  - [L_trouser, L_shin_trouser]
+  - [R_trouser, R_shin_trouser]
+  - [samue_body, samue_sleeve_l, samue_sleeve_r]
+  - [tail_root, tail_tip]
+
+parts:
+  - {name: tail_root,        bone: tail_01,     shape: capsule, size: [0.20, "tail"],       offset: [0, "tail*0.5"],  color: hair,        order: 0,  tags: [beast, tail]}
+  - {name: tail_tip,         bone: tail_02,     shape: blade,   size: [0.18, "tail*0.9"],   offset: [0, "tail*0.42"], color: hair_2,      order: 1,  tags: [beast, tail]}
+  - {name: back_hair,        bone: head,        shape: bell,    size: [0.92, 1.05], offset: [0, 0.30], color: hair_2, order: 2,  redraw: false, tags: [hair]}
+  - {name: L_trouser,        bone: thigh_l,     shape: capsule, size: [0.42, "thigh"],      offset: [0, "thigh*0.5"], color: samue,       order: 3,  tags: [cloth, lower]}
+  - {name: L_shin_trouser,   bone: shin_l,      shape: capsule, size: [0.36, "shin"],       offset: [0, "shin*0.5"],  color: samue,       order: 4,  tags: [cloth, lower]}
+  - {name: L_geta,           bone: foot_l,      shape: plate,   size: [0.44, 0.16], offset: [0.04, 0.14], color: geta, order: 5,  tags: [cloth, lower, shoe]}
+  - {name: samue_sleeve_l,   bone: upper_arm_l, shape: bell,    size: [0.52, "upper_arm*1.15"], offset: [0, "upper_arm*0.45"], color: samue, order: 6,  tags: [cloth, upper]}
+  - {name: L_forearm,        bone: lower_arm_l, shape: capsule, size: [0.26, "lower_arm"],  offset: [0, "lower_arm*0.5"], color: skin,  order: 7,  redraw: false, tags: [skin]}
+  - {name: L_hand,           bone: hand_l,      shape: ellipse, size: [0.26, 0.26], offset: [0, 0.10], color: skin, order: 8,  redraw: false, tags: [skin]}
+  - {name: samue_body,       bone: torso,       shape: capsule, size: [0.80, "torso+chest*0.85"], offset: [0, "torso*0.60"], color: samue, order: 9,  tags: [cloth, upper]}
+  - {name: obi_belt,         bone: torso,       shape: plate,   size: [0.86, 0.22], offset: [0, "torso*0.18"], color: obi, order: 10, tags: [cloth, accessory]}
+  - {name: obi_tail,         bone: torso,       shape: blade,   size: [0.14, 0.60], offset: [-0.34, "torso*0.05"], rotation: 6, color: obi, order: 11, tags: [cloth, accessory]}
+  - {name: R_trouser,        bone: thigh_r,     shape: capsule, size: [0.42, "thigh"],      offset: [0, "thigh*0.5"], color: samue,       order: 12, tags: [cloth, lower]}
+  - {name: R_shin_trouser,   bone: shin_r,      shape: capsule, size: [0.36, "shin"],       offset: [0, "shin*0.5"],  color: samue,       order: 13, tags: [cloth, lower]}
+  - {name: R_geta,           bone: foot_r,      shape: plate,   size: [0.44, 0.16], offset: [0.04, 0.14], color: geta, order: 14, tags: [cloth, lower, shoe]}
+  # 敞开的领口露出锁骨，所以颈部与上胸的皮肤是要保形的
+  - {name: neck,             bone: neck,        shape: capsule, size: [0.26, 0.30], offset: [0, 0.10], color: skin_2, order: 15, redraw: false, tags: [skin]}
+  - {name: collar_open,      bone: chest,       shape: cone,    size: [0.40, 0.34], offset: [0, "chest*0.78"], rotation: 180, color: skin, order: 16, redraw: false, tags: [skin]}
+  - {name: head_base,        bone: head,        shape: ellipse, size: [0.72, 0.92], offset: [0, 0.46], color: skin, order: 17, redraw: false, tags: [skin, face]}
+  # 异色瞳：左金右青碧。这是他情绪失控的唯一提示，绝不能重绘
+  - {name: L_eye,            bone: head,        shape: ellipse, size: [0.13, 0.22], offset: [-0.17, 0.42], color: eye_gold, order: 18, redraw: false, tags: [face]}
+  - {name: R_eye,            bone: head,        shape: ellipse, size: [0.13, 0.22], offset: [0.17, 0.42], color: eye_teal, order: 19, redraw: false, tags: [face]}
+  - {name: front_hair,       bone: head,        shape: bell,    size: [0.86, 0.52], offset: [0, 0.74], color: hair, order: 20, redraw: false, tags: [hair]}
+  - {name: hair_streak,      bone: head,        shape: blade,   size: [0.09, 0.40], offset: [-0.13, 0.80], rotation: 10, color: streak, order: 21, redraw: false, tags: [hair]}
+  # 猫耳平时不显形，情绪波动时半透明浮现。作为独立部件便于做显隐差分
+  - {name: L_ear,            bone: head,        shape: cone,    size: [0.26, 0.34], offset: [-0.28, 1.05], rotation: -14, color: hair, order: 22, redraw: false, tags: [beast, ear]}
+  - {name: R_ear,            bone: head,        shape: cone,    size: [0.26, 0.34], offset: [0.28, 1.05], rotation: 14, color: hair, order: 23, redraw: false, tags: [beast, ear]}
+  - {name: L_ear_inner,      bone: head,        shape: cone,    size: [0.14, 0.20], offset: [-0.28, 1.00], rotation: -14, color: ear_inner, order: 24, redraw: false, tags: [beast, ear]}
+  - {name: R_ear_inner,      bone: head,        shape: cone,    size: [0.14, 0.20], offset: [0.28, 1.00], rotation: 14, color: ear_inner, order: 25, redraw: false, tags: [beast, ear]}
+  - {name: samue_sleeve_r,   bone: upper_arm_r, shape: bell,    size: [0.52, "upper_arm*1.15"], offset: [0, "upper_arm*0.45"], color: samue, order: 26, tags: [cloth, upper]}
+  - {name: R_forearm,        bone: lower_arm_r, shape: capsule, size: [0.26, "lower_arm"],  offset: [0, "lower_arm*0.5"], color: skin, order: 27, redraw: false, tags: [skin]}
+  - {name: R_hand,           bone: hand_r,      shape: ellipse, size: [0.26, 0.26], offset: [0, 0.10], color: skin, order: 28, redraw: false, tags: [skin]}
+  - {name: spirit_mark,      bone: chest,       shape: ring,    size: [0.34, 0.34], offset: [0.20, "chest*0.5"], color: spirit_glow, order: 29, redraw: false, tags: [light]}
+
+outfits:
+  # 差分 E：240 年前的和装（结发、藏青长着）
+  antique_kimono:
+    prompt: >-
+      masterpiece, best quality, anime cel shading, hard-edged shadows, 1boy,
+      dark navy antique kimono nagagi, wide sleeves, grey obi sash,
+      Meiji era japanese clothing, flat color blocks, TV anime style
+    negative_prompt: >-
+      (worst quality, low quality:1.3), lowres, blurry, nude, see through,
+      soft gradient, airbrush, extra limbs, text, watermark
+    targets: [cloth]
+    palette_hint:
+      samue: "#232C46"
+      samue_shadow: "#141A2C"
+      obi: "#6E6A5C"
+      geta: "#2A241C"
+
+  # 与冴同框的对手戏用：把作务衣换成雾灰调，压低存在感
+  mist_grey:
+    prompt: >-
+      masterpiece, best quality, anime cel shading, hard-edged shadows, 1boy,
+      misty grey modern samue, loose wide sleeves, charcoal sash,
+      muted desaturated palette, flat color blocks, TV anime style
+    negative_prompt: >-
+      (worst quality, low quality:1.3), lowres, blurry, nude, see through,
+      soft gradient, airbrush, extra limbs, text
+    targets: [cloth]
+    palette_hint:
+      samue: "#6F6E78"
+      samue_shadow: "#4A4952"
+      obi: "#8E8B96"
+      geta: "#33323A"

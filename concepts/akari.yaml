@@ -1,0 +1,127 @@
+# 天野 灯莉 —— 《雾见町 遗物招领所》主角
+# 设定：docs/kirimicho/01-角色-天野灯莉.md
+# 剪影识别点：半纏 + 呆毛 + 纸灯笼
+id: akari
+bible: kirimicho/akari
+archetype: 招领人
+
+canvas:
+  width: 448
+  height: 576
+  origin_x: 224
+  origin_y: 520
+
+# 设定集的服装组按顺序给出：制服 / 制服影 / 半纏 / 半纏影 / 家纹
+aliases:
+  uniform: costume
+  uniform_shadow: costume_2
+  hanten: costume_3
+  hanten_shadow: costume_4
+  crest: costume_5
+  scarf: accent          # 红色领巾
+  key_brass: accent_2    # 黄铜古董钥匙
+  lantern_glow: accent_3 # 纸灯笼的暖橙光
+
+palette:
+  sock: "#3A3A42"        # 炭黑过膝袜，设定文里有描述但配色表未列
+  boot: "#5A4030"        # 焦茶色短皮靴
+  lantern_paper: "#F6E4C0"
+
+animations: [idle, breath, walk, run, wave, cast]
+
+groups:
+  # 过膝袜与皮靴在原画里是连续的深色块，分组避免 canny 在脚踝画出横线
+  - [L_sock, L_boot]
+  - [R_sock, R_boot]
+  - [hanten_body, hanten_sleeve_l, hanten_cuff_l]
+  - [hanten_body, hanten_sleeve_r, hanten_cuff_r]
+  - [uniform_top, pleated_skirt]
+
+parts:
+  - {name: hanten_back,     bone: chest,       shape: cape,    size: [1.7, "torso+chest+0.6"], offset: [0, -0.55], color: hanten_shadow, order: 0,  tags: [cloth, hanten, back]}
+  - {name: back_hair,       bone: head,        shape: bell,    size: [0.95, 1.15], offset: [0, 0.28], color: hair_2,   order: 1,  redraw: false, tags: [hair]}
+  - {name: L_sock,          bone: thigh_l,     shape: capsule, size: [0.34, "thigh*0.75"], offset: [0, "thigh*0.62"], color: sock, order: 2,  tags: [cloth, lower, sock]}
+  - {name: L_shin_sock,     bone: shin_l,      shape: capsule, size: [0.30, "shin*0.8"],   offset: [0, "shin*0.4"],  color: sock, order: 3,  tags: [cloth, lower, sock]}
+  - {name: L_boot,          bone: foot_l,      shape: plate,   size: [0.46, 0.30], offset: [0.06, 0.12], color: boot, order: 4,  tags: [cloth, lower, shoe]}
+  - {name: hanten_sleeve_l, bone: upper_arm_l, shape: capsule, size: [0.40, "upper_arm*1.1"], offset: [0, "upper_arm*0.5"], color: hanten, order: 5,  tags: [cloth, hanten, upper]}
+  # 袖子长到盖住半个手背，是"衣服还没长到她身上"的视觉暗示，尺寸刻意超出小臂
+  - {name: hanten_cuff_l,   bone: lower_arm_l, shape: bell,    size: [0.44, "lower_arm*1.25"], offset: [0, "lower_arm*0.55"], color: hanten, order: 6,  tags: [cloth, hanten, upper]}
+  - {name: L_hand,          bone: hand_l,      shape: ellipse, size: [0.26, 0.26], offset: [0, 0.10], color: skin, order: 7,  redraw: false, tags: [skin]}
+  - {name: uniform_top,     bone: torso,       shape: capsule, size: [0.72, "torso+chest*0.9"], offset: [0, "torso*0.62"], color: uniform, order: 8,  tags: [cloth, uniform, upper]}
+  - {name: pleated_skirt,   bone: hip,         shape: bell,    size: [1.05, 0.62], offset: [0, -0.24], color: uniform_shadow, order: 9,  tags: [cloth, uniform, lower]}
+  - {name: R_sock,          bone: thigh_r,     shape: capsule, size: [0.34, "thigh*0.75"], offset: [0, "thigh*0.62"], color: sock, order: 10, tags: [cloth, lower, sock]}
+  - {name: R_shin_sock,     bone: shin_r,      shape: capsule, size: [0.30, "shin*0.8"],   offset: [0, "shin*0.4"],  color: sock, order: 11, tags: [cloth, lower, sock]}
+  - {name: R_boot,          bone: foot_r,      shape: plate,   size: [0.46, 0.30], offset: [0.06, 0.12], color: boot, order: 12, tags: [cloth, lower, shoe]}
+  - {name: hanten_body,     bone: torso,       shape: capsule, size: [0.86, "torso+chest*0.8"], offset: [0, "torso*0.55"], color: hanten, order: 13, tags: [cloth, hanten, upper]}
+  - {name: hanten_crest,    bone: torso,       shape: ellipse, size: [0.30, 0.30], offset: [0.02, "torso*1.05"], color: crest, order: 14, tags: [cloth, hanten, accessory]}
+  - {name: neck,            bone: neck,        shape: capsule, size: [0.22, 0.26], offset: [0, 0.10], color: skin_2, order: 15, redraw: false, tags: [skin]}
+  - {name: neck_scarf,      bone: chest,       shape: plate,   size: [0.52, 0.20], offset: [0, "chest*0.95"], color: scarf, order: 16, tags: [cloth, accessory]}
+  - {name: brass_key,       bone: chest,       shape: blade,   size: [0.10, 0.34], offset: [0.10, "chest*0.55"], color: key_brass, order: 17, tags: [accessory, prop]}
+  - {name: head_base,       bone: head,        shape: ellipse, size: [0.74, 0.94], offset: [0, 0.46], color: skin, order: 18, redraw: false, tags: [skin, face]}
+  - {name: L_eye,           bone: head,        shape: ellipse, size: [0.17, 0.21], offset: [-0.17, 0.40], color: eye, order: 19, redraw: false, tags: [face]}
+  - {name: R_eye,           bone: head,        shape: ellipse, size: [0.17, 0.21], offset: [0.17, 0.40], color: eye, order: 20, redraw: false, tags: [face]}
+  - {name: front_hair,      bone: head,        shape: bell,    size: [0.88, 0.56], offset: [0, 0.72], color: hair, order: 21, redraw: false, tags: [hair]}
+  # 呆毛是她的情绪计量器，也是剪影识别点，任何构图都不能裁掉，所以单独成件
+  - {name: ahoge,           bone: head,        shape: blade,   size: [0.12, 0.55], offset: [-0.10, 1.05], rotation: -18, color: hair, order: 22, redraw: false, tags: [hair]}
+  - {name: hair_clip,       bone: head,        shape: plate,   size: [0.20, 0.09], offset: [-0.30, 0.66], color: boot, order: 23, redraw: false, tags: [accessory]}
+  - {name: hanten_sleeve_r, bone: upper_arm_r, shape: capsule, size: [0.40, "upper_arm*1.1"], offset: [0, "upper_arm*0.5"], color: hanten, order: 24, tags: [cloth, hanten, upper]}
+  - {name: hanten_cuff_r,   bone: lower_arm_r, shape: bell,    size: [0.44, "lower_arm*1.25"], offset: [0, "lower_arm*0.55"], color: hanten, order: 25, tags: [cloth, hanten, upper]}
+  - {name: R_hand,          bone: hand_r,      shape: ellipse, size: [0.26, 0.26], offset: [0, 0.10], color: skin, order: 26, redraw: false, tags: [skin]}
+  # 灯笼固定用左手提，右手要空出来触碰物品——所以挂在 hand_l 上
+  - {name: lantern,         bone: hand_l,      shape: capsule, size: [0.42, 0.58], offset: [0, -0.42], color: lantern_paper, order: 27, tags: [prop]}
+  - {name: lantern_light,   bone: hand_l,      shape: ellipse, size: [0.30, 0.34], offset: [0, -0.42], color: lantern_glow, order: 28, redraw: false, tags: [prop, light]}
+
+outfits:
+  # 差分 B：私服（米色针织开衫 + 长裙 + 帆布鞋）
+  casual_knit:
+    prompt: >-
+      masterpiece, best quality, anime cel shading, hard-edged shadows, 1girl,
+      beige knit cardigan, long pleated skirt, canvas sneakers, casual day off outfit,
+      flat color blocks, TV anime style
+    negative_prompt: >-
+      (worst quality, low quality:1.3), lowres, blurry, nude, bare, see through,
+      soft gradient, airbrush, extra limbs, text, watermark
+    targets: [cloth]
+    palette_hint:
+      hanten: "#E4D3B4"
+      hanten_shadow: "#BFA981"
+      uniform: "#8C7A5E"
+      uniform_shadow: "#6B5C45"
+      sock: "#F0EAE0"
+      boot: "#D9D4CA"
+
+  # 差分 C：作业装（半纏 + 束袖带 + 长靴 + 腰挂工具袋），战斗回专用
+  field_work:
+    prompt: >-
+      masterpiece, best quality, anime cel shading, hard-edged shadows, 1girl,
+      indigo work happi coat with sleeve ties, tall leather boots, tool pouch on belt,
+      practical field gear, flat color blocks, TV anime style
+    negative_prompt: >-
+      (worst quality, low quality:1.3), lowres, blurry, nude, see through,
+      soft gradient, airbrush, extra limbs, text
+    targets: [cloth]
+    palette_hint:
+      hanten: "#24405F"
+      hanten_shadow: "#16283D"
+      uniform: "#1C2845"
+      uniform_shadow: "#121A2E"
+      sock: "#2A2A30"
+      boot: "#3E2C20"
+
+  # 差分 D：幼年黄色雨衣。与忍、冴同款，是三人共通的伏笔
+  childhood_raincoat:
+    prompt: >-
+      masterpiece, best quality, anime cel shading, hard-edged shadows, 1girl,
+      bright yellow hooded raincoat, white reflective stripes on cuffs,
+      red rain boots, brown shorts, flat color blocks, TV anime style
+    negative_prompt: >-
+      (worst quality, low quality:1.3), lowres, blurry, nude, see through,
+      soft gradient, airbrush, extra limbs, text
+    targets: [cloth]
+    palette_hint:
+      hanten: "#F5C93F"
+      hanten_shadow: "#D19E1E"
+      uniform: "#F5C93F"
+      uniform_shadow: "#6B4A32"
+      sock: "#EFC0AB"
+      boot: "#D9534F"

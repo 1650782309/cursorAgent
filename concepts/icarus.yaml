@@ -1,0 +1,149 @@
+# 伊卡洛斯 —— 《黄昏之羽》主角
+# 设定：docs/icarus/01-角色-伊卡洛斯.md
+#
+# 配色纪律（来自设定集第 5 节，换装时必须遵守）：
+# 1. 全身只有一种高饱和色：青蓝 #4FD8F5，出现位置不得超过 5 处。
+#    所以宝石、杖尖水晶都标了 redraw: false，避免 SD 把高饱和色铺开。
+# 2. 粉色只允许出现在头发与浮游羽毛上，服装本体不得使用粉色。
+# 3. 禁用纯黑与高饱和暖色，阴影用紫灰调硬边块面。
+id: icarus
+bible: icarus/icarus
+archetype: 羽者
+
+canvas:
+  width: 448
+  height: 640
+  origin_x: 224
+  origin_y: 572
+
+# 设定集给的顺序：象牙白 / 1 影 / 珍珠白 / 薰衣草薄纱 / 薄纱影
+aliases:
+  ivory: costume
+  ivory_shadow: costume_2
+  pearl: costume_3
+  chiffon: costume_4
+  chiffon_shadow: costume_5
+  # 羽翼色带按"根部 -> 边缘"的渐变顺序给出
+  wing_root: wings       # 纯白
+  wing_mid: wings_2      # 淡蓝
+  wing_outer: wings_3    # 淡紫
+  wing_edge: wings_4     # 玫粉
+  wing_shadow: wings_5
+  crystal: gem           # 唯一的高饱和色
+
+animations: [idle, breath, walk, run, wave, cast]
+
+groups:
+  - [L_wing_inner, L_wing_outer]
+  - [R_wing_inner, R_wing_outer]
+  - [L_thighhigh, L_shoe]
+  - [R_thighhigh, R_shoe]
+  - [bodice, layered_skirt]
+  - [L_veil_sleeve, L_veil_drape]
+  - [R_veil_sleeve, R_veil_drape]
+
+parts:
+  # 羽翼：立绘中左右不对称展开，一侧高扬一侧低垂，用来撑起剪影。
+  # 色带靠根/中/外/缘四段硬边分色，禁止喷枪渐变。
+  # 色带顺序对两侧翅膀都是「根 -> 中 -> 外 -> 缘」，段间硬边分色。
+  # 左右不对称只体现在骨骼的展开角度上，不体现在配色上。
+  - {name: L_wing_inner,   bone: wing_l,       shape: wing,    size: ["wing*0.75", "wing"],      offset: [0, "wing*0.50"], mirror: true, color: wing_root,  order: 0, tags: [wing]}
+  - {name: L_wing_outer,   bone: wing_l_02,    shape: wing,    size: ["wing*0.60", "wing*0.85"], offset: [0, "wing*0.42"], mirror: true, color: wing_mid,   order: 1, tags: [wing]}
+  - {name: L_wing_tip,     bone: wing_l_02,    shape: wing,    size: ["wing*0.38", "wing*0.50"], offset: [0, "wing*0.62"], mirror: true, color: wing_edge,  order: 2, tags: [wing]}
+  - {name: R_wing_inner,   bone: wing_r,       shape: wing,    size: ["wing*0.75", "wing"],      offset: [0, "wing*0.50"], color: wing_root, order: 3, tags: [wing]}
+  - {name: R_wing_outer,   bone: wing_r_02,    shape: wing,    size: ["wing*0.60", "wing*0.85"], offset: [0, "wing*0.42"], color: wing_mid,  order: 4, tags: [wing]}
+  - {name: R_wing_tip,     bone: wing_r_02,    shape: wing,    size: ["wing*0.38", "wing*0.50"], offset: [0, "wing*0.62"], color: wing_edge, order: 5, tags: [wing]}
+  # 光轮：纤细的银环 + 朝外的小型尖刺，是神圣徽记而非科技设备
+  - {name: halo,           bone: head,         shape: ring,    size: [1.15, 1.15], offset: [0, 0.62], color: silver, order: 6, redraw: false, tags: [silver, halo]}
+  - {name: back_hair,      bone: head,         shape: bell,    size: [0.90, 0.80], offset: [0, 0.34], color: hair_2, order: 7, redraw: false, tags: [hair]}
+  - {name: L_thighhigh,    bone: thigh_l,      shape: capsule, size: [0.32, "thigh*0.85"], offset: [0, "thigh*0.55"], color: pearl, order: 8, tags: [cloth, lower]}
+  - {name: L_shin,         bone: shin_l,       shape: capsule, size: [0.28, "shin*0.9"], offset: [0, "shin*0.45"], color: pearl, order: 9, tags: [cloth, lower]}
+  - {name: L_shoe,         bone: foot_l,       shape: cone,    size: [0.34, 0.40], offset: [0.06, 0.14], rotation: 110, color: silver, order: 10, tags: [cloth, lower, shoe]}
+  - {name: L_veil_sleeve,  bone: upper_arm_l,  shape: capsule, size: [0.38, "upper_arm*0.9"], offset: [0, "upper_arm*0.5"], color: chiffon, order: 11, tags: [cloth, veil, upper]}
+  - {name: L_veil_drape,   bone: lower_arm_l,  shape: bell,    size: [0.52, "lower_arm*1.5"], offset: [0, "lower_arm*0.55"], color: chiffon, order: 12, tags: [cloth, veil, upper]}
+  - {name: L_hand,         bone: hand_l,       shape: ellipse, size: [0.24, 0.24], offset: [0, 0.10], color: skin, order: 13, redraw: false, tags: [skin]}
+  - {name: R_thighhigh,    bone: thigh_r,      shape: capsule, size: [0.32, "thigh*0.85"], offset: [0, "thigh*0.55"], color: pearl, order: 14, tags: [cloth, lower]}
+  - {name: R_shin,         bone: shin_r,       shape: capsule, size: [0.28, "shin*0.9"], offset: [0, "shin*0.45"], color: pearl, order: 15, tags: [cloth, lower]}
+  - {name: R_shoe,         bone: foot_r,       shape: cone,    size: [0.34, 0.40], offset: [0.06, 0.14], rotation: 110, color: silver, order: 16, tags: [cloth, lower, shoe]}
+  - {name: bodice,         bone: torso,        shape: capsule, size: [0.66, "torso+chest*0.75"], offset: [0, "torso*0.66"], color: ivory, order: 17, tags: [cloth, upper]}
+  # 短款多层薄纱裙
+  - {name: layered_skirt,  bone: hip,          shape: bell,    size: [1.15, 0.62], offset: [0, -0.22], color: chiffon, order: 18, tags: [cloth, lower]}
+  - {name: waist_drape,    bone: hip,          shape: blade,   size: [0.22, 1.10], offset: [-0.42, -0.45], rotation: 8, color: pearl, order: 19, tags: [cloth, accessory]}
+  - {name: silver_waist,   bone: torso,        shape: plate,   size: [0.74, 0.16], offset: [0, "torso*0.22"], color: silver, order: 20, tags: [silver, accessory]}
+  - {name: neck,           bone: neck,         shape: capsule, size: [0.20, 0.24], offset: [0, 0.10], color: skin_2, order: 21, redraw: false, tags: [skin]}
+  - {name: L_pauldron,     bone: chest,        shape: bell,    size: [0.40, 0.28], offset: [-0.40, "chest*0.80"], color: pearl, order: 22, tags: [cloth, accessory]}
+  - {name: R_pauldron,     bone: chest,        shape: bell,    size: [0.40, 0.28], offset: [0.40, "chest*0.80"], color: pearl, order: 23, tags: [cloth, accessory]}
+  # 胸口中央的青蓝魔法宝石，是全身唯一的高饱和色，锁死不重绘
+  - {name: core_gem,       bone: chest,        shape: ellipse, size: [0.24, 0.28], offset: [0, "chest*0.52"], color: crystal, order: 24, redraw: false, tags: [gem]}
+  - {name: gem_setting,    bone: chest,        shape: ring,    size: [0.40, 0.44], offset: [0, "chest*0.52"], color: silver, order: 25, tags: [silver, accessory]}
+  - {name: head_base,      bone: head,         shape: ellipse, size: [0.68, 0.90], offset: [0, 0.46], color: skin, order: 26, redraw: false, tags: [skin, face]}
+  # 紫罗兰色半眯眼：上眼睑常压低约 1/3，所以瞳形比其他角色扁
+  - {name: L_eye,          bone: head,         shape: ellipse, size: [0.18, 0.14], offset: [-0.16, 0.42], color: eye, order: 27, redraw: false, tags: [face]}
+  - {name: R_eye,          bone: head,         shape: ellipse, size: [0.18, 0.14], offset: [0.16, 0.42], color: eye, order: 28, redraw: false, tags: [face]}
+  - {name: front_hair,     bone: head,         shape: bell,    size: [0.86, 0.50], offset: [0, 0.74], color: hair, order: 29, redraw: false, tags: [hair]}
+  # 双耳侧的羽翼形银色发饰，左右不对称，右侧略大
+  - {name: L_hair_orn,     bone: head,         shape: wing,    size: [0.30, 0.24], offset: [-0.38, 0.56], rotation: -20, color: silver, order: 30, redraw: false, tags: [silver, accessory]}
+  - {name: R_hair_orn,     bone: head,         shape: wing,    size: [0.38, 0.30], offset: [0.40, 0.56], rotation: 20, color: silver, order: 31, redraw: false, tags: [silver, accessory]}
+  - {name: R_veil_sleeve,  bone: upper_arm_r,  shape: capsule, size: [0.38, "upper_arm*0.9"], offset: [0, "upper_arm*0.5"], color: chiffon, order: 32, tags: [cloth, veil, upper]}
+  - {name: R_veil_drape,   bone: lower_arm_r,  shape: bell,    size: [0.52, "lower_arm*1.5"], offset: [0, "lower_arm*0.55"], color: chiffon, order: 33, tags: [cloth, veil, upper]}
+  - {name: R_hand,         bone: hand_r,       shape: ellipse, size: [0.24, 0.24], offset: [0, 0.10], color: skin, order: 34, redraw: false, tags: [skin]}
+  # 法杖「エオス」：细长优雅轻盈，顶端羽翼与花瓣交叠 + 青蓝水晶
+  - {name: staff_shaft,    bone: hand_r,       shape: blade,   size: [0.12, 2.80], offset: [0.08, 0.70], rotation: 4, color: silver, order: 35, tags: [weapon]}
+  - {name: staff_crown,    bone: hand_r,       shape: wing,    size: [0.46, 0.40], offset: [0.14, 2.00], rotation: 4, color: pearl, order: 36, tags: [weapon]}
+  - {name: staff_crystal,  bone: hand_r,       shape: ellipse, size: [0.18, 0.20], offset: [0.14, 2.02], color: crystal, order: 37, redraw: false, tags: [gem]}
+
+outfits:
+  # 差分 E：残翼（羽毛稀疏、边缘破碎、光轮尖刺内收），剧情后期
+  broken_wings:
+    prompt: >-
+      masterpiece, best quality, anime cel shading, hard-edged shadows, 1girl,
+      tattered angelic dress, frayed ivory fabric, torn lavender chiffon,
+      dulled silver trim, sparse damaged feathers, flat color blocks, TV anime style
+    negative_prompt: >-
+      (worst quality, low quality:1.3), lowres, blurry, nude, see through,
+      mechanical wings, armor plating, pink clothing, pure black,
+      soft gradient, airbrush, extra limbs, text, watermark
+    targets: [cloth, wing]
+    palette_hint:
+      ivory: "#D8D2C6"
+      ivory_shadow: "#A9A296"
+      pearl: "#C8C2BA"
+      chiffon: "#A294BC"
+      chiffon_shadow: "#7E7196"
+
+  # 差分 F：私服（宽松针织 + 长裙，羽翼收起，光轮消失）
+  offduty_knit:
+    prompt: >-
+      masterpiece, best quality, anime cel shading, hard-edged shadows, 1girl,
+      loose oversized cream knit sweater, long lavender skirt, casual day off,
+      soft knit texture, flat color blocks, TV anime style
+    negative_prompt: >-
+      (worst quality, low quality:1.3), lowres, blurry, nude, see through,
+      pink clothing, pure black, high saturation,
+      soft gradient, airbrush, extra limbs, text
+    targets: [cloth]
+    palette_hint:
+      ivory: "#F2EAD8"
+      ivory_shadow: "#D3C9B4"
+      pearl: "#E6E0D2"
+      chiffon: "#BFB2D8"
+      chiffon_shadow: "#9A8CB8"
+
+  # 觉醒（差分 D）的羽翼配色：色带整体往青蓝端推，但仍守"只有一种高饱和色"
+  awakened_wings:
+    prompt: >-
+      masterpiece, best quality, anime cel shading, hard-edged shadows, 1girl,
+      radiant angelic regalia fully spread wings, pearl white feathers,
+      pale blue and lavender banded gradient, silver lace trim,
+      flat color blocks, hard edge segmentation, TV anime style
+    negative_prompt: >-
+      (worst quality, low quality:1.3), lowres, blurry, nude, mechanical wings,
+      geometric energy wings, industrial armor, pink clothing, pure black,
+      soft gradient, airbrush, extra limbs, text
+    targets: [wing, silver]
+    palette_hint:
+      wing_root: "#FFFFFF"
+      wing_mid: "#A8DCF2"
+      wing_outer: "#B8C8EC"
+      wing_edge: "#D8E8F5"
+      silver: "#EDEAF2"

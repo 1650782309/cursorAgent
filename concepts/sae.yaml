@@ -1,0 +1,121 @@
+# 时雨 冴 —— 《雾见町 遗物招领所》对手役
+# 设定：docs/kirimicho/03-角色-时雨冴.md
+# 剪影识别点：高马尾 + 大衣下摆 + 伞枪
+#
+# 配色纪律：全身只允许存在一处红色（左臂臂章）。臂章因此单独成件，
+# 且不参与换装重绘——否则 SD 很容易把红色铺到别处，破坏视线引导。
+id: sae
+bible: kirimicho/sae
+archetype: 回收局执行官
+
+canvas:
+  width: 448
+  height: 640
+  origin_x: 224
+  origin_y: 584
+
+# 设定集给的顺序：大衣 / 大衣影 / 内衬·裤 / 内衬影 / 银扣
+aliases:
+  coat: costume
+  coat_shadow: costume_2
+  inner: costume_3
+  inner_shadow: costume_4
+  silver_button: costume_5
+  armband: accent        # 臂章·唯一红
+  gunbrella: accent_2    # 伞枪「時雨」
+
+animations: [idle, breath, walk, run, wave, cast]
+
+groups:
+  # 紧身裤与长筒军靴在原画里连成一条深色，分组避免膝盖处出现分界线
+  - [L_trouser, L_boot_shaft, L_boot]
+  - [R_trouser, R_boot_shaft, R_boot]
+  - [coat_body, coat_skirt]
+  - [coat_sleeve_l, coat_cuff_l]
+  - [coat_sleeve_r, coat_cuff_r]
+
+parts:
+  - {name: ponytail,        bone: head,        shape: blade,   size: [0.42, 2.10], offset: [0.10, 0.10], rotation: 172, color: hair_2, order: 0,  redraw: false, tags: [hair]}
+  - {name: coat_back,       bone: chest,       shape: cape,    size: [1.55, "torso+chest+0.9"], offset: [0, -0.70], color: coat_shadow, order: 1, tags: [cloth, coat, back]}
+  - {name: L_trouser,       bone: thigh_l,     shape: capsule, size: [0.32, "thigh"],    offset: [0, "thigh*0.5"], color: inner,     order: 2,  tags: [cloth, lower]}
+  - {name: L_boot_shaft,    bone: shin_l,      shape: capsule, size: [0.34, "shin"],     offset: [0, "shin*0.5"],  color: inner_shadow, order: 3, tags: [cloth, lower, shoe]}
+  - {name: L_boot,          bone: foot_l,      shape: plate,   size: [0.46, 0.26], offset: [0.06, 0.12], color: inner_shadow, order: 4, tags: [cloth, lower, shoe]}
+  - {name: coat_sleeve_l,   bone: upper_arm_l, shape: capsule, size: [0.40, "upper_arm"], offset: [0, "upper_arm*0.5"], color: coat, order: 5, tags: [cloth, coat, upper]}
+  - {name: coat_cuff_l,     bone: lower_arm_l, shape: capsule, size: [0.34, "lower_arm"], offset: [0, "lower_arm*0.5"], color: coat, order: 6, tags: [cloth, coat, upper]}
+  # 黑色皮手套从不摘下——"不直接接触"的具象化，所以手套算服装而不是皮肤
+  - {name: L_glove,         bone: hand_l,      shape: ellipse, size: [0.26, 0.28], offset: [0, 0.10], color: inner_shadow, order: 7, tags: [cloth, glove]}
+  - {name: inner_top,       bone: torso,       shape: capsule, size: [0.62, "torso+chest*0.9"], offset: [0, "torso*0.62"], color: inner, order: 8, tags: [cloth, upper]}
+  - {name: coat_body,       bone: torso,       shape: capsule, size: [0.80, "torso+chest*0.85"], offset: [0, "torso*0.62"], color: coat, order: 9, tags: [cloth, coat, upper]}
+  - {name: waist_belt,      bone: torso,       shape: plate,   size: [0.84, 0.20], offset: [0, "torso*0.22"], color: inner_shadow, order: 10, tags: [cloth, coat, accessory]}
+  # 下摆及小腿，行动时呈锐利的三角剪影——她的剪影识别点
+  - {name: coat_skirt,      bone: hip,         shape: cone,    size: [1.55, 1.70], offset: [0, -0.80], color: coat, order: 11, tags: [cloth, coat, lower]}
+  - {name: R_trouser,       bone: thigh_r,     shape: capsule, size: [0.32, "thigh"],    offset: [0, "thigh*0.5"], color: inner,     order: 12, tags: [cloth, lower]}
+  - {name: R_boot_shaft,    bone: shin_r,      shape: capsule, size: [0.34, "shin"],     offset: [0, "shin*0.5"],  color: inner_shadow, order: 13, tags: [cloth, lower, shoe]}
+  - {name: R_boot,          bone: foot_r,      shape: plate,   size: [0.46, 0.26], offset: [0.06, 0.12], color: inner_shadow, order: 14, tags: [cloth, lower, shoe]}
+  - {name: neck,            bone: neck,        shape: capsule, size: [0.22, 0.28], offset: [0, 0.10], color: skin_2, order: 15, redraw: false, tags: [skin]}
+  # 立领遮住左颈侧的旧烧伤疤，露出即为剧情节点
+  - {name: stand_collar,    bone: chest,       shape: capsule, size: [0.44, 0.46], offset: [0, "chest*0.95"], color: coat, order: 16, tags: [cloth, coat, accessory]}
+  - {name: button_row,      bone: chest,       shape: blade,   size: [0.09, "chest*0.9"], offset: [-0.13, "chest*0.45"], color: silver_button, order: 17, tags: [cloth, coat, accessory]}
+  - {name: head_base,       bone: head,        shape: ellipse, size: [0.70, 0.92], offset: [0, 0.46], color: skin, order: 18, redraw: false, tags: [skin, face]}
+  - {name: L_eye,           bone: head,        shape: ellipse, size: [0.15, 0.17], offset: [-0.17, 0.42], color: eye, order: 19, redraw: false, tags: [face]}
+  - {name: R_eye,           bone: head,        shape: ellipse, size: [0.15, 0.17], offset: [0.17, 0.42], color: eye, order: 20, redraw: false, tags: [face]}
+  - {name: front_hair,      bone: head,        shape: bell,    size: [0.84, 0.50], offset: [0, 0.76], color: hair, order: 21, redraw: false, tags: [hair]}
+  - {name: hair_clasp,      bone: head,        shape: plate,   size: [0.22, 0.10], offset: [0.06, 0.20], color: inner_shadow, order: 22, redraw: false, tags: [accessory]}
+  - {name: coat_sleeve_r,   bone: upper_arm_r, shape: capsule, size: [0.40, "upper_arm"], offset: [0, "upper_arm*0.5"], color: coat, order: 23, tags: [cloth, coat, upper]}
+  - {name: coat_cuff_r,     bone: lower_arm_r, shape: capsule, size: [0.34, "lower_arm"], offset: [0, "lower_arm*0.5"], color: coat, order: 24, tags: [cloth, coat, upper]}
+  - {name: R_glove,         bone: hand_r,      shape: ellipse, size: [0.26, 0.28], offset: [0, 0.10], color: inner_shadow, order: 25, tags: [cloth, glove]}
+  # 全身唯一的高饱和红，视线引导用。redraw: false 把它锁死
+  - {name: red_armband,     bone: upper_arm_l, shape: plate,   size: [0.44, 0.24], offset: [0, "upper_arm*0.30"], color: armband, order: 26, redraw: false, tags: [accessory]}
+  - {name: gunbrella_shaft, bone: hand_r,      shape: blade,   size: [0.16, 2.60], offset: [0.10, 0.60], rotation: 5, color: gunbrella, order: 27, tags: [weapon]}
+
+outfits:
+  # 差分 B：战斗装（脱去大衣，露出黑色紧身作战服 + 肩带）
+  combat_suit:
+    prompt: >-
+      masterpiece, best quality, anime cel shading, hard-edged shadows, 1girl,
+      black skintight combat bodysuit, shoulder harness straps, military belt,
+      knee-high tactical boots, monochrome palette, flat color blocks, TV anime style
+    negative_prompt: >-
+      (worst quality, low quality:1.3), lowres, blurry, nude, bare, see through,
+      soft gradient, airbrush, extra limbs, text, watermark
+    targets: [cloth]
+    palette_hint:
+      coat: "#24262E"
+      coat_shadow: "#15171C"
+      inner: "#2B2E38"
+      inner_shadow: "#101218"
+      silver_button: "#8A8F9A"
+
+  # 差分 C：便装（灰色高领毛衣 + 长裤）。第 7 话唯一一次
+  grey_turtleneck:
+    prompt: >-
+      masterpiece, best quality, anime cel shading, hard-edged shadows, 1girl,
+      grey turtleneck sweater, long trousers, off duty casual wear,
+      soft knit texture, flat color blocks, TV anime style
+    negative_prompt: >-
+      (worst quality, low quality:1.3), lowres, blurry, nude, see through,
+      soft gradient, airbrush, extra limbs, text
+    targets: [cloth]
+    palette_hint:
+      coat: "#9A9CA4"
+      coat_shadow: "#75777F"
+      inner: "#4A4C55"
+      inner_shadow: "#33353C"
+      silver_button: "#B0B3BA"
+
+  # 差分 D：幼年站台上的黄色雨衣，与灯莉、忍同款——三人共通的伏笔
+  childhood_raincoat:
+    prompt: >-
+      masterpiece, best quality, anime cel shading, hard-edged shadows, 1girl,
+      bright yellow hooded raincoat, white reflective stripes,
+      red rain boots, train platform, flat color blocks, TV anime style
+    negative_prompt: >-
+      (worst quality, low quality:1.3), lowres, blurry, nude, see through,
+      soft gradient, airbrush, extra limbs, text
+    targets: [cloth]
+    palette_hint:
+      coat: "#F5C93F"
+      coat_shadow: "#D19E1E"
+      inner: "#6B4A32"
+      inner_shadow: "#D9534F"
+      silver_button: "#FFFFFF"
