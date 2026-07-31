@@ -1,0 +1,24 @@
+# 逆向目标与产物一律不入库，见 docs/07-legal.md
+targets/
+vendor/
+*.apk
+*.ipa
+*.aab
+*.unity3d
+*.bundle
+*.assets
+global-metadata*.dat
+dump.cs
+DummyDll/
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+.DS_Store
+.idea/
+.vscode/
