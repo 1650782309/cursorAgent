@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "urecon"
+version = "0.1.0"
+description = "Unity 工程逆向学习工具流的编排器"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+# 对象级资源清点需要 UnityPy；不装则降级为文件级统计
+assets = ["UnityPy>=1.10"]
+
+[project.scripts]
+urecon = "urecon.cli:main"
+
+[tool.setuptools]
+packages = ["urecon"]
