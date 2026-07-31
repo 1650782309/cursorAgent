@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+
+# 流水线产物，全部可由 `python -m spineforge run` 重新生成
+build/

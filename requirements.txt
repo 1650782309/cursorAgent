@@ -1,0 +1,7 @@
+numpy>=1.26
+pillow>=10.0
+pyyaml>=6.0
+requests>=2.31
+
+# 仅测试需要
+pytest>=8.0
