@@ -247,7 +247,7 @@ def main(argv: list[str] | None = None) -> int:
     threshold = args.high_freq * len(images)
     high_freq = [t for t, c in tag_counter.items() if c >= threshold]
     rare = [t for t, c in tag_counter.items() if c <= 1]
-    print(f"\n== 需要人工决策的标签 ==")
+    print("\n== 需要人工决策的标签 ==")
     if high_freq:
         print(f"  出现率 >= {args.high_freq:.0%}，多半是角色固有特征，建议用 --drop 删掉并入触发词:")
         for tag in sorted(high_freq):
