@@ -1,0 +1,30 @@
+# SDXL 角色 LoRA 数据集配置（kohya-ss/sd-scripts --dataset_config）
+#
+# 目录约定：
+#   datasets/<角色代号>/images/*.png   训练图
+#   datasets/<角色代号>/images/*.txt   同名标签文件
+#
+# 打标原则（这一步比调参重要得多，详见 docs/05-lora.md）：
+#   - 角色固有特征（脸、发色、瞳色）不要写进标签，让它们被吸收进触发词
+#   - 可变要素（姿势、表情、服装、背景、镜头）必须写进标签，推理时才控制得住
+#   - 触发词放第一位，配合下面的 keep_tokens = 1 固定不被打乱
+
+[general]
+caption_extension = ".txt"
+shuffle_caption = true
+# 保护第一个标签（触发词）不参与打乱
+keep_tokens = 1
+enable_bucket = true
+# 不要把小图放大喂进去，那是画质污染
+bucket_no_upscale = true
+min_bucket_reso = 640
+max_bucket_reso = 1536
+
+[[datasets]]
+resolution = [1024, 1024]
+batch_size = 2
+
+[[datasets.subsets]]
+image_dir = "./datasets/char_placeholder/images"
+# 30 张图 × 10 次重复 × 12 epoch ÷ batch 2 ≈ 1800 步，是角色 LoRA 的常用量级
+num_repeats = 10

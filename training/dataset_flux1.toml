@@ -1,0 +1,24 @@
+# Flux.1 角色 LoRA 数据集配置（kohya-ss/sd-scripts --dataset_config）
+#
+# 与 SDXL 版的关键差别：
+#   Flux 用 T5 文本编码器，理解自然语言。标签建议写成短句而不是 danbooru tag 堆叠，
+#   例如 "chartrigger, a girl in a black lamellar cuirass, standing, front view, grey background"。
+#   同一批图不要混用两种打标风格，否则模型学不到稳定的语义映射。
+
+[general]
+caption_extension = ".txt"
+# Flux 用句子式标签，打乱语序会破坏语义，因此关掉 shuffle
+shuffle_caption = false
+keep_tokens = 1
+enable_bucket = true
+bucket_no_upscale = true
+min_bucket_reso = 512
+max_bucket_reso = 1536
+
+[[datasets]]
+resolution = [1024, 1024]
+batch_size = 1
+
+[[datasets.subsets]]
+image_dir = "./datasets/char_placeholder/images"
+num_repeats = 8

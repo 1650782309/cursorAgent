@@ -1,0 +1,11 @@
+# 训练中途的样图提示词（Flux.1 版，句子式）
+# Flux 走 CFG=1，样图参数用 --l 1；步数给 20 足够看出趋势。
+# 把 chartrigger 换成你实际的触发词。
+
+chartrigger, an anime-style character standing in full body view, front view, plain grey background --w 832 --h 1216 --l 1 --s 20
+
+chartrigger, an anime-style character running, seen from the side, plain grey background --w 832 --h 1216 --l 1 --s 20
+
+chartrigger, an anime-style character wearing a plain school uniform, upper body, plain grey background --w 896 --h 1152 --l 1 --s 20
+
+chartrigger, close-up portrait of an anime-style character with a neutral expression, soft even lighting --w 1024 --h 1024 --l 1 --s 20

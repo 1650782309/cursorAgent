@@ -10,7 +10,8 @@
   2. 每个模板引用的词库都存在，且能在限定层数内展开
   3. 每个工作流 JSON 的节点引用合法、必需标记齐全
   4. PNG 元数据解析正确（自己造一张带参数的 PNG 再读回来）
-  5. 用桩服务器跑完整的提交—轮询—下载流程
+  5. 数据集体检与标签整理工具的行为符合打标原则
+  6. 用桩服务器跑完整的提交—轮询—下载流程
 """
 
 from __future__ import annotations
@@ -44,7 +45,7 @@ def check(name: str, ok: bool, detail: str = "") -> None:
 
 
 def test_wildcards() -> None:
-    print("[1/5] 词库")
+    print("[1/6] 词库")
     resolver = WildcardResolver(REPO_ROOT / "wildcards")
     names = resolver.names()
     check("词库文件存在", bool(names), f"{len(names)} 个")
@@ -59,7 +60,7 @@ def test_wildcards() -> None:
 
 
 def test_templates() -> None:
-    print("[2/5] 模板展开")
+    print("[2/6] 模板展开")
     rng = random.Random(0)
     resolver = WildcardResolver(REPO_ROOT / "wildcards", rng)
     templates = sorted((REPO_ROOT / "prompts/templates").glob("*.txt"))
@@ -79,7 +80,7 @@ def test_templates() -> None:
 
 
 def test_workflows() -> None:
-    print("[3/5] 工作流")
+    print("[3/6] 工作流")
     paths = sorted((REPO_ROOT / "workflows/api").glob("*.json"))
     check("工作流文件存在", bool(paths), f"{len(paths)} 个")
     for path in paths:
@@ -101,8 +102,8 @@ def test_workflows() -> None:
             check(path.name, False, str(exc))
 
 
-def make_png(path: Path, payload: dict) -> None:
-    """造一张 1x1 PNG，把工作流写进 tEXt 块，模拟 ComfyUI 的产出。"""
+def make_png(path: Path, payload: dict | None = None, width: int = 1, height: int = 1) -> None:
+    """造一张真实可解码的 PNG，可选地把工作流写进 tEXt 块，模拟 ComfyUI 的产出。"""
 
     def chunk(ctype: bytes, data: bytes) -> bytes:
         return (
@@ -112,20 +113,17 @@ def make_png(path: Path, payload: dict) -> None:
             + struct.pack(">I", zlib.crc32(ctype + data) & 0xFFFFFFFF)
         )
 
-    ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 2, 0, 0, 0)
-    idat = zlib.compress(b"\x00\xff\xff\xff")
-    text = b"prompt\x00" + json.dumps(payload).encode("utf-8")
-    path.write_bytes(
-        b"\x89PNG\r\n\x1a\n"
-        + chunk(b"IHDR", ihdr)
-        + chunk(b"tEXt", text)
-        + chunk(b"IDAT", idat)
-        + chunk(b"IEND", b"")
-    )
+    ihdr = struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)
+    raw = b"".join(b"\x00" + b"\xff" * (3 * width) for _ in range(height))
+    body = b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", ihdr)
+    if payload is not None:
+        body += chunk(b"tEXt", b"prompt\x00" + json.dumps(payload).encode("utf-8"))
+    body += chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b"")
+    path.write_bytes(body)
 
 
 def test_png_metadata(tmp_dir: Path) -> None:
-    print("[4/5] PNG 元数据")
+    print("[4/6] PNG 元数据")
     workflow = json.loads(
         (REPO_ROOT / "workflows/api/01_divergence_sdxl.json").read_text(encoding="utf-8")
     )
@@ -154,6 +152,48 @@ def test_png_metadata(tmp_dir: Path) -> None:
             index[0].get("checkpoint") == "illustriousXL.safetensors",
             str(index[0].get("checkpoint")),
         )
+
+
+def test_dataset_tool(tmp_dir: Path) -> None:
+    print("[5/6] 数据集体检工具")
+    from prepare_dataset import image_size
+    from prepare_dataset import main as dataset_main
+
+    dataset = tmp_dir / "dataset"
+    dataset.mkdir()
+    sizes = [(832, 1216), (896, 1152), (1024, 1024), (1216, 832), (512, 512)]
+    captions = [
+        "silver hair, amber eyes, full body, front view, standing, grey background",
+        "silver hair, amber eyes, full body, side view, walking, grey background",
+        "silver hair, amber eyes, portrait, face close-up, smiling",
+        "silver hair, amber eyes, upper body, back view, grey background",
+        "silver hair, amber eyes, full body, front view, sitting, one-off-noise-tag",
+    ]
+    for i, ((w, h), caption) in enumerate(zip(sizes, captions)):
+        make_png(dataset / f"{i:02d}.png", None, w, h)
+        (dataset / f"{i:02d}.txt").write_text(caption, encoding="utf-8")
+
+    check("PNG 尺寸解析", image_size(dataset / "00.png") == (832, 1216))
+    check("小图能被识别", image_size(dataset / "04.png") == (512, 512))
+
+    code = dataset_main(["--dir", str(dataset)])
+    check("体检模式退出码", code == 0, f"code={code}")
+    check("体检模式不改标签", (dataset / "00.txt").read_text("utf-8").startswith("silver hair"))
+
+    code = dataset_main(
+        [
+            "--dir", str(dataset),
+            "--trigger", "chartrigger",
+            "--drop", "silver hair,amber eyes",
+            "--apply",
+        ]
+    )
+    check("整理模式退出码", code == 0, f"code={code}")
+    tags = [t.strip() for t in (dataset / "00.txt").read_text("utf-8").split(",")]
+    check("触发词在首位", tags[0] == "chartrigger", str(tags[:2]))
+    check("固有特征已删除", "silver hair" not in tags and "amber eyes" not in tags, str(tags))
+    check("可变要素保留", "front view" in tags and "standing" in tags, str(tags))
+    check("原文件已备份", (dataset / "00.txt.bak").is_file())
 
 
 class StubHandler(BaseHTTPRequestHandler):
@@ -224,7 +264,7 @@ class StubHandler(BaseHTTPRequestHandler):
 
 
 def test_end_to_end(tmp_dir: Path) -> None:
-    print("[5/5] 端到端（桩服务器）")
+    print("[6/6] 端到端（桩服务器）")
     StubHandler.submitted = {}
     StubHandler.image_bytes = (tmp_dir / "sample.png").read_bytes()
     server = HTTPServer(("127.0.0.1", 0), StubHandler)
@@ -307,6 +347,7 @@ def main() -> int:
     with tempfile.TemporaryDirectory() as tmp:
         tmp_dir = Path(tmp)
         test_png_metadata(tmp_dir)
+        test_dataset_tool(tmp_dir)
         test_end_to_end(tmp_dir)
 
     print()

@@ -28,6 +28,9 @@ venv/
 .DS_Store
 Thumbs.db
 
+# prepare_dataset.py 改标签时留下的备份
+*.txt.bak
+
 # 本地覆盖配置
 local.env
 scripts/local_config.json
