@@ -1,0 +1,74 @@
+{
+  "1": {
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": { "title": "CHECKPOINT" },
+    "inputs": {
+      "ckpt_name": "illustriousXL.safetensors"
+    }
+  },
+  "2": {
+    "class_type": "CLIPSetLastLayer",
+    "_meta": { "title": "CLIP_SKIP" },
+    "inputs": {
+      "clip": ["1", 1],
+      "stop_at_clip_layer": -2
+    }
+  },
+  "3": {
+    "class_type": "CLIPTextEncode",
+    "_meta": { "title": "POSITIVE" },
+    "inputs": {
+      "clip": ["2", 0],
+      "text": "masterpiece, best quality, 1girl, solo, full body, simple background"
+    }
+  },
+  "4": {
+    "class_type": "CLIPTextEncode",
+    "_meta": { "title": "NEGATIVE" },
+    "inputs": {
+      "clip": ["2", 0],
+      "text": "worst quality, low quality, bad anatomy, bad hands, text, watermark"
+    }
+  },
+  "5": {
+    "class_type": "EmptyLatentImage",
+    "_meta": { "title": "LATENT" },
+    "inputs": {
+      "width": 832,
+      "height": 1216,
+      "batch_size": 1
+    }
+  },
+  "6": {
+    "class_type": "KSampler",
+    "_meta": { "title": "SAMPLER" },
+    "inputs": {
+      "model": ["1", 0],
+      "positive": ["3", 0],
+      "negative": ["4", 0],
+      "latent_image": ["5", 0],
+      "seed": 0,
+      "steps": 20,
+      "cfg": 5.0,
+      "sampler_name": "euler_ancestral",
+      "scheduler": "normal",
+      "denoise": 1.0
+    }
+  },
+  "7": {
+    "class_type": "VAEDecode",
+    "_meta": { "title": "DECODE" },
+    "inputs": {
+      "samples": ["6", 0],
+      "vae": ["1", 2]
+    }
+  },
+  "8": {
+    "class_type": "SaveImage",
+    "_meta": { "title": "SAVE" },
+    "inputs": {
+      "images": ["7", 0],
+      "filename_prefix": "concept/divergence"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+# 发色 / hair color
+# 与 design/color_scheme.txt 可能冲突，做配色比对时建议只保留一个维度参与随机。
+
+black hair
+dark blue hair
+navy hair
+silver hair
+white hair
+platinum blonde hair
+golden blonde hair
+ash blonde hair
+light brown hair
+chestnut brown hair
+auburn hair
+crimson hair
+pink hair
+pale pink hair
+lavender hair
+purple hair
+mint green hair
+dark green hair
+teal hair
+grey hair
+two-tone hair
+gradient hair, dark roots
+streaked hair with colored highlights
+white hair with black inner layer
+faded blue to white gradient hair

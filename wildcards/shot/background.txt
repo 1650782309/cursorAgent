@@ -1,0 +1,14 @@
+# 背景 / background
+# 概念阶段绝大多数情况用纯色背景，方便抠图和并排评审。
+# 复杂背景只在氛围比稿时使用。
+
+simple background, light grey
+simple background, white
+simple background, dark neutral
+gradient background, neutral
+turnaround sheet background with grid
+blurred workshop interior
+blurred street at night
+blurred forest depth
+blurred ruins
+blurred snowfield

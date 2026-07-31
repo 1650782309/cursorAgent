@@ -1,0 +1,21 @@
+# 训练中途的样图提示词（SDXL 版）
+# 目的不是出好图，而是回答三个问题：
+#   1. 换姿势脸还在吗          -> 检查身份是否学到
+#   2. 换服装换得掉吗          -> 检查服装是否被错误地绑进了触发词
+#   3. 构图和背景是否被锁死    -> 检查是否过拟合训练集
+# 把 chartrigger 换成你实际的触发词。
+
+# 基准：训练集同类构图，应该最像
+chartrigger, 1girl, solo, full body, standing, simple background --w 832 --h 1216 --l 5 --s 24
+
+# 换姿势：脸和服装应保持，姿势要跟着变
+chartrigger, 1girl, solo, full body, running, side view, simple background --w 832 --h 1216 --l 5 --s 24
+
+# 换服装：如果换不掉，说明打标时把服装当成固有特征处理了
+chartrigger, 1girl, solo, upper body, school uniform, simple background --w 896 --h 1152 --l 5 --s 24
+
+# 换场景与光照：背景若始终回到训练集的样子，就是过拟合信号
+chartrigger, 1girl, solo, cowboy shot, night city street, neon lighting --w 896 --h 1152 --l 5 --s 24
+
+# 脸部特写：检查五官细节和瞳色是否稳定
+chartrigger, 1girl, solo, portrait, face close-up, neutral expression --w 1024 --h 1024 --l 5 --s 24

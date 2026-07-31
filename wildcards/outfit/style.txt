@@ -1,0 +1,37 @@
+# 服装大类风格 / outfit style
+# 这一维决定服装的结构语言。和 design/culture.txt 组合是撞出新方向的主力。
+
+full plate armor
+half plate over gambeson
+scale mail with tabard
+lamellar armor with silk cords
+leather brigandine
+long hooded cloak over tunic
+military greatcoat
+naval officer uniform
+academy blazer uniform
+sailor uniform
+gothic lolita dress
+victorian mourning gown
+qipao with side slits
+hanfu with wide sleeves
+kimono with wide obi
+haori over modern clothes
+miko outfit
+nun habit
+tactical bodysuit with harness
+pilot flight suit
+mechanic overalls with tool belt
+utility jumpsuit
+streetwear layered hoodie
+oversized knit sweater and shorts
+trench coat over dress shirt
+desert robes with layered wraps
+fur-lined winter parka
+diving suit with brass fittings
+circus ringmaster coat
+ballet costume with tulle
+bandaged minimal clothing
+ragged patchwork clothes
+ceremonial robe with long train
+exoskeleton frame over undersuit

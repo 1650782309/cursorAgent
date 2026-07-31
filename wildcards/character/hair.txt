@@ -1,0 +1,33 @@
+# 发型 / hairstyle
+# 发型是二次元角色最强的剪影识别要素之一，和 design/silhouette.txt 配合使用。
+
+very long straight hair
+long wavy hair
+hime cut
+twin tails
+low twin tails
+side ponytail
+high ponytail
+braided crown
+single long braid
+twin braids
+messy short hair
+bob cut
+blunt bangs bob
+asymmetrical bob
+undercut with long top
+wolf cut
+curly shoulder length hair
+ahoge with messy hair
+drill twin tails
+half updo
+messy bun with loose strands
+space buns
+shaved side with long fringe
+slicked back hair
+hair covering one eye
+long hair with blunt bangs and sidelocks
+short hair with hair intakes
+voluminous ringlets
+straight hair with hair ribbon
+ponytail with long sidelocks

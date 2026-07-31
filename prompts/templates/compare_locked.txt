@@ -1,0 +1,24 @@
+# 控制变量比对模板：姿势与镜头由 ControlNet 锁定，模板里不再出现这些维度
+# 用途：workflows/api/02_pose_locked_compare.json
+# 配合固定 seed，一次只扫一个设计维度，产出真正可比的方案组。
+#
+# 用法示例：
+#   python scripts/batch_generate.py \
+#     --workflow workflows/api/02_pose_locked_compare.json \
+#     --template prompts/templates/compare_locked.txt \
+#     --axis outfit/material --fixed-seed 12345 --label mat-scan
+
+masterpiece, best quality, very aesthetic, absurdres,
+{1girl, solo|1boy, solo},
+__character/archetype__,
+__character/hair__, __character/hair_color__,
+__character/eye__,
+__outfit/style__,
+__outfit/material__,
+__outfit/detail__,
+__design/color_scheme__,
+__design/motif__,
+neutral expression,
+flat even lighting, no dramatic shadows,
+simple background, light grey,
+clean lineart, flat cel shading

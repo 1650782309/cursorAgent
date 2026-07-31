@@ -1,0 +1,34 @@
+# 发散主模板：全身、平光、纯色背景
+# 用途：概念探索第一阶段的大批量铺量，只看剪影与第一眼记忆点。
+#
+# 语法说明（由 scripts/wildcard.py 解析）：
+#   __path/name__     从 wildcards/path/name.txt 随机抽一行
+#   {a|b|c}           从若干候选中随机抽一个
+#   {2$$a|b|c}        抽 2 个并用 ", " 连接
+#   # 开头的行        注释，不进入提示词
+#   多行会被合并为一行，行尾不需要写逗号以外的东西
+#
+# 质量前缀按底模族切换：
+#   Illustrious / NoobAI 系： masterpiece, best quality, very aesthetic, absurdres
+#   Pony 系：               score_9, score_8_up, score_7_up
+# 详见 docs/02-models.md
+
+masterpiece, best quality, very aesthetic, absurdres,
+{1girl, solo|1boy, solo},
+__character/archetype__,
+__character/build__,
+__character/hair__, __character/hair_color__,
+__character/eye__,
+__outfit/style__,
+__outfit/material__,
+__outfit/detail__,
+__outfit/accessory__,
+__design/silhouette__,
+__design/culture__,
+__design/color_scheme__,
+__design/weapon__,
+neutral expression,
+full body, front view, straight on,
+flat even lighting, no dramatic shadows,
+simple background, light grey,
+__style/artstyle__

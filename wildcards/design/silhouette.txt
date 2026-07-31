@@ -1,0 +1,19 @@
+# 剪影特征 / silhouette
+# 概念评审的第一关：把图缩到 100px 还能不能认出这个角色。
+# 建议把这一维作为控制变量网格的主轴（scripts/batch_generate.py --axis design/silhouette）。
+
+triangular silhouette, wide at the hem
+inverted triangle, heavy shoulders
+tall vertical column silhouette
+compact rounded silhouette
+asymmetrical silhouette, one side bulked
+long trailing silhouette behind the figure
+spiky irregular outline
+smooth streamlined outline
+layered stepped silhouette
+hourglass with cinched waist
+boxy oversized silhouette
+silhouette broken by a large single prop
+winged outline extending sideways
+hooded silhouette hiding the head shape
+cocoon shape wrapped in fabric

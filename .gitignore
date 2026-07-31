@@ -1,0 +1,36 @@
+# 生成产物与本地资产不入库
+output/
+runs/
+datasets/
+models/
+*.safetensors
+*.ckpt
+*.gguf
+*.pt
+*.bin
+
+# 图片产物（参考图与控制图请放 references/ 并按需用 git-lfs 管理）
+output/**/*.png
+output/**/*.jpg
+output/**/*.webp
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/
+
+# 编辑器与系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# prepare_dataset.py 改标签时留下的备份
+*.txt.bak
+
+# 本地覆盖配置
+local.env
+scripts/local_config.json

@@ -1,0 +1,15 @@
+# 二次元通用负面提示词
+# Illustrious / NoobAI / Pony 等 SDXL 系精调通用。
+# Flux 系不需要负面提示词（CFG=1，工作流里用 ConditioningZeroOut 置空），不要照搬这一份。
+#
+# 概念阶段的取舍：负面词不要写太长。过长的负面会压缩设计空间，
+# 让所有方案趋同——这和发散的目标相反。只压掉真正影响判断的缺陷。
+
+worst quality, low quality, lowres, jpeg artifacts,
+bad anatomy, bad hands, extra digits, fewer digits, missing fingers,
+extra limbs, fused limbs, malformed limbs,
+multiple views, multiple girls, multiple boys, 2girls, 2boys,
+text, watermark, signature, username, artist name, logo,
+cropped, out of frame,
+blurry, depth of field,
+sketch, unfinished

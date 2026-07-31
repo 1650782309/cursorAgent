@@ -1,0 +1,78 @@
+# SDXL 二次元角色 LoRA 训练配置（kohya-ss/sd-scripts）
+#
+# 用法：
+#   accelerate launch --num_cpu_threads_per_process 4 sdxl_train_network.py \
+#     --config_file  /path/to/training/sdxl_character_lora.toml \
+#     --dataset_config /path/to/training/dataset_sdxl.toml
+#
+# 这份配置针对 24GB 显存（RTX 5090D v2）调过，属于宽裕档：
+# 1024 分辨率、batch 2、训文本编码器，显存占用约 14-18GB。
+# 如果要同时用机器出图，把 train_batch_size 降到 1 并开 gradient_accumulation_steps = 2。
+#
+# 关键取舍见 docs/05-lora.md。
+
+[model_arguments]
+# 换成你实际的二次元底模。训练底模必须和推理底模同一个，否则效果会打折。
+pretrained_model_name_or_path = "./models/illustriousXL.safetensors"
+# SDXL 自带 VAE 在 fp16 下容易出 NaN，训练时强制 fp32 跑 VAE
+no_half_vae = true
+
+[network_arguments]
+network_module = "networks.lora"
+# 角色任务不需要高 rank。32 已经足够记住脸和服装，再高只会更容易过拟合。
+network_dim = 32
+network_alpha = 16
+# 二次元角色建议连文本编码器一起训，触发词和标签的响应会准很多
+network_train_unet_only = false
+
+[optimizer_arguments]
+optimizer_type = "AdamW8bit"
+learning_rate = 1e-4
+unet_lr = 1e-4
+# 文本编码器学习率要比 UNet 低，否则标签语义会被带偏
+text_encoder_lr = 5e-5
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 3
+lr_warmup_steps = 50
+max_grad_norm = 1.0
+
+[training_arguments]
+output_dir = "./output/lora"
+# 命名带版本号，方便和 runs/ 里的出图批次对上
+output_name = "char_placeholder_v1"
+save_model_as = "safetensors"
+save_precision = "fp16"
+# 每 2 个 epoch 存一次，最后挑"像但没过拟合"的那个，而不是直接用最后一个
+save_every_n_epochs = 2
+max_train_epochs = 12
+train_batch_size = 2
+gradient_accumulation_steps = 1
+gradient_checkpointing = true
+# Blackwell（RTX 50 系）上用 bf16，不要沿用老教程的 fp16
+mixed_precision = "bf16"
+full_bf16 = true
+# 5090 上不要装旧版 xformers，用 PyTorch 原生 SDPA
+sdpa = true
+xformers = false
+cache_latents = true
+cache_latents_to_disk = true
+# 训文本编码器时不能缓存 TE 输出
+cache_text_encoder_outputs = false
+max_data_loader_n_workers = 2
+persistent_data_loader_workers = true
+seed = 20260731
+# 对二次元线稿类数据有明显收益，抑制高噪声步的过拟合
+min_snr_gamma = 5
+prior_loss_weight = 1.0
+# 注意：SDXL 训练不使用 clip_skip，这里不要加，推理时再设 -2
+
+[logging_arguments]
+logging_dir = "./output/logs"
+log_with = "tensorboard"
+
+[sample_arguments]
+# 训练中途出样图是判断过拟合最直接的手段：
+# 一旦样图的构图和背景开始锁死在训练集上，就说明该停了
+sample_every_n_epochs = 1
+sample_sampler = "euler_a"
+sample_prompts = "./training/sample_prompts.txt"

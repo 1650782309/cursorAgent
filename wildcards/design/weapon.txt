@@ -1,0 +1,27 @@
+# 武器与主道具 / weapon and hero prop
+# 主道具往往占据剪影的一大块，建议和 design/silhouette.txt 一起考虑。
+
+oversized cleaver sword
+slender rapier with ornate guard
+curved saber with tassel
+dual short blades
+naginata polearm
+war fan
+segmented whip blade
+greatshield with chipped paint
+crossbow with brass mechanism
+flintlock pistol with carved grip
+revolver with engraved cylinder
+long barrel rifle wrapped in cloth
+staff topped with a caged crystal
+lantern staff
+oversized wrench
+surgical case with instruments
+book chained to the wrist
+paired hand cannons
+spear with prayer strips
+kusarigama with chain
+gauntlets with retractable claws
+umbrella concealing a blade
+broken sword bound with rope
+no weapon, empty hands

@@ -1,0 +1,23 @@
+# 配色基调 / color scheme
+# 做配色比对时，把这一维设为网格轴，并固定 seed 与其他所有维度。
+
+monochrome black and white with single red accent
+desaturated earth tones with brass accents
+deep navy and gold
+crimson and charcoal
+white and pale blue, high key
+black and violet with cyan glow
+olive green and worn leather brown
+ivory and dusty rose
+teal and rust orange complementary
+mustard yellow and deep grey
+pale mint and cream, low saturation
+burgundy and antique gold
+slate blue and silver
+sand beige and turquoise
+plum purple and copper
+forest green and bone white
+matte black with neon magenta accents
+sepia limited palette
+pastel triad, pink mint lavender
+high contrast yellow and black warning palette

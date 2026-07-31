@@ -1,0 +1,32 @@
+# 文化母题 / cultural motif
+# 与 outfit/style.txt 交叉可以撞出"熟悉又陌生"的组合，这是概念设计最想要的效果。
+# 注意：使用真实文化元素时要做尊重性审查，避免符号误用。
+
+heian court aesthetics
+sengoku era martial
+tang dynasty court
+song dynasty scholar
+ming dynasty guard
+joseon scholar attire
+mughal court ornament
+persian miniature ornament
+ottoman court textile
+byzantine mosaic gold
+norse carved knotwork
+celtic spiral ornament
+slavic embroidery pattern
+andean woven textile
+mesoamerican stepped motif
+west african indigo textile
+tibetan monastic layering
+southeast asian batik pattern
+art nouveau organic curves
+art deco geometric inlay
+bauhaus primary shapes
+brutalist concrete mass
+victorian industrial brass
+dieselpunk military surplus
+retrofuturism, 1960s space age
+soviet constructivist graphics
+cyberpunk street signage
+solarpunk woven plant structures

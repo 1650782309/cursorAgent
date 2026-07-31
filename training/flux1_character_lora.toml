@@ -1,0 +1,77 @@
+# Flux.1 dev 二次元角色 LoRA 训练配置（kohya-ss/sd-scripts）
+#
+# 用法：
+#   accelerate launch --num_cpu_threads_per_process 4 flux_train_network.py \
+#     --config_file  /path/to/training/flux1_character_lora.toml \
+#     --dataset_config /path/to/training/dataset_flux1.toml
+#
+# 24GB 显存能训，但要靠 fp8 底模 + 分块卸载（blocks_to_swap）。
+# blocks_to_swap 越大越省显存、越慢：24GB 上从 12 起调，OOM 就往上加，富余就往下减。
+#
+# 注意：Flux.1 dev 是非商用许可。商业项目请走 BFL 商用授权，
+# 或改用 schnell / klein 一档。这一点在项目立项时就要确认。
+
+[model_arguments]
+pretrained_model_name_or_path = "./models/flux1-dev.safetensors"
+clip_l = "./models/clip_l.safetensors"
+t5xxl = "./models/t5xxl_fp16.safetensors"
+ae = "./models/ae.safetensors"
+
+[network_arguments]
+network_module = "networks.lora_flux"
+# Flux 的 LoRA 比 SDXL 更容易过拟合，rank 要压低
+network_dim = 16
+network_alpha = 16
+# Flux 上训 T5 收益很小、成本很高，只训 UNet
+network_train_unet_only = true
+
+[optimizer_arguments]
+optimizer_type = "AdamW8bit"
+learning_rate = 8e-5
+lr_scheduler = "constant_with_warmup"
+lr_warmup_steps = 100
+max_grad_norm = 1.0
+
+[training_arguments]
+output_dir = "./output/lora"
+output_name = "char_placeholder_flux_v1"
+save_model_as = "safetensors"
+save_precision = "bf16"
+save_every_n_epochs = 2
+max_train_epochs = 10
+# 24GB 上 batch 只能是 1，用梯度累积把有效 batch 补到 4
+train_batch_size = 1
+gradient_accumulation_steps = 4
+gradient_checkpointing = true
+mixed_precision = "bf16"
+sdpa = true
+xformers = false
+# fp8 底模是 24GB 能跑起来的前提；Blackwell 原生支持 fp8，几乎没有质量损失
+fp8_base = true
+blocks_to_swap = 12
+cache_latents = true
+cache_latents_to_disk = true
+# 不训 TE，所以可以缓存文本编码结果，省下大量显存和时间
+cache_text_encoder_outputs = true
+cache_text_encoder_outputs_to_disk = true
+apply_t5_attn_mask = true
+t5xxl_max_token_length = 512
+max_data_loader_n_workers = 2
+persistent_data_loader_workers = true
+seed = 20260731
+
+# Flux 的流匹配相关参数，以下是社区验证过的稳定组合，不建议随意改
+timestep_sampling = "shift"
+discrete_flow_shift = 3.1582
+model_prediction_type = "raw"
+guidance_scale = 1.0
+loss_type = "l2"
+
+[logging_arguments]
+logging_dir = "./output/logs"
+log_with = "tensorboard"
+
+[sample_arguments]
+sample_every_n_epochs = 1
+sample_sampler = "euler"
+sample_prompts = "./training/sample_prompts_flux.txt"

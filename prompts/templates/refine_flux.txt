@@ -1,0 +1,16 @@
+# Flux 精修模板：自然语言长句
+# 用途：workflows/api/03_refine_flux_img2img.json
+# Flux 系的语义理解远强于 SDXL，这里用完整句子描述结构与材质关系，
+# 而不是堆 danbooru tag。把 SDXL 阶段选中的方案交给它补结构和材质。
+#
+# 使用时把方括号内容替换为实际定稿描述，通常不需要随机词库。
+
+An anime-style character illustration, full body, front view, flat even lighting,
+plain light grey background. The character wears [服装结构描述：例如 a layered
+lamellar cuirass laced with dark silk cords over a long charcoal tunic]. The armor
+is made of [材质描述：例如 blackened steel with a faint oil sheen, edges worn to
+bare metal]. [配饰与叙事细节：例如 A cracked porcelain mask hangs at the left hip,
+and the right forearm is wrapped in stained bandages.] The color palette is
+[配色：例如 charcoal and deep navy with a single crimson accent at the sash].
+Clean lineart with flat cel shading, crisp material separation, anatomically
+coherent hands, plausible garment construction with visible seams and fastenings.

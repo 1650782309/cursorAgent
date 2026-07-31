@@ -1,0 +1,16 @@
+# 发散辅助模板：纯剪影扫描
+# 用途：抛开配色和材质，只比剪影。缩略图评审时最有效的一步。
+# 建议配合 --fixed-seed 与 --axis design/silhouette 使用。
+
+masterpiece, best quality, absurdres,
+{1girl, solo|1boy, solo},
+__character/archetype__,
+__character/build__,
+__character/hair__,
+__outfit/style__,
+__design/silhouette__,
+__design/weapon__,
+backlit silhouette, solid black shape, no interior detail,
+full body, front view, straight on,
+simple background, white,
+clean lineart, high contrast graphic style

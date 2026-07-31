@@ -1,0 +1,18 @@
+# 表情 / expression
+# 概念阶段建议先用中性表情比对设计，定向后再用这一维铺表情提案。
+
+neutral expression
+faint smile
+confident smirk
+open mouth laughing
+cold stare
+narrowed eyes, suspicious
+tearful eyes
+exhausted, dark circles
+furious, gritted teeth
+serene closed eyes
+surprised, wide eyes
+bored, half-lidded eyes
+smug expression
+gentle melancholy
+blank expressionless face
