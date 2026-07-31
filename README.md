@@ -64,7 +64,7 @@
 
 ![伊卡洛斯配色卡](assets/icarus/palettes/icarus.svg)
 
-| 概念立绘（宣传稿） |
+| 概念立绘（雾见町 TV 赛璐璐画风） |
 | --- |
 | ![伊卡洛斯](assets/icarus/concepts/icarus-keyvisual.png) |
 
