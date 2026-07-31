@@ -1,195 +1,504 @@
 {
-  "akari": {
-    "name": "天野 灯莉 / Amano Akari",
-    "subtitle": "第三代招领人 · 156cm · 6.8 头身",
-    "accent": "#E8703A",
-    "groups": [
-      {
-        "label": "头发 Hair",
-        "swatches": [
-          { "hex": "#E8703A", "use": "底色" },
-          { "hex": "#B84E27", "use": "1 影" },
-          { "hex": "#FFA168", "use": "高光" }
-        ]
+  "works": {
+    "kirimicho": {
+      "title": "《雾见町 遗物招领所》",
+      "medium": "深夜档 TV 动画",
+      "characters": {
+        "akari": {
+          "name": "天野 灯莉 / Amano Akari",
+          "subtitle": "第三代招领人 · 156cm · 6.8 头身",
+          "accent": "#E8703A",
+          "groups": [
+            {
+              "label": "头发 Hair",
+              "swatches": [
+                {
+                  "hex": "#E8703A",
+                  "use": "底色"
+                },
+                {
+                  "hex": "#B84E27",
+                  "use": "1 影"
+                },
+                {
+                  "hex": "#FFA168",
+                  "use": "高光"
+                }
+              ]
+            },
+            {
+              "label": "瞳 Eye",
+              "swatches": [
+                {
+                  "hex": "#F2A83B",
+                  "use": "底色"
+                },
+                {
+                  "hex": "#C4761E",
+                  "use": "1 影"
+                },
+                {
+                  "hex": "#FFF3D6",
+                  "use": "高光"
+                }
+              ]
+            },
+            {
+              "label": "肤 Skin",
+              "swatches": [
+                {
+                  "hex": "#FBE0CE",
+                  "use": "底色"
+                },
+                {
+                  "hex": "#EFBDA4",
+                  "use": "1 影"
+                },
+                {
+                  "hex": "#F2A78F",
+                  "use": "红晕"
+                }
+              ]
+            },
+            {
+              "label": "服装 Costume",
+              "swatches": [
+                {
+                  "hex": "#2C3E63",
+                  "use": "制服"
+                },
+                {
+                  "hex": "#1C2845",
+                  "use": "制服影"
+                },
+                {
+                  "hex": "#35547E",
+                  "use": "半纏"
+                },
+                {
+                  "hex": "#22395A",
+                  "use": "半纏影"
+                },
+                {
+                  "hex": "#F2F5F8",
+                  "use": "家纹"
+                }
+              ]
+            },
+            {
+              "label": "点缀 Accent",
+              "swatches": [
+                {
+                  "hex": "#D64545",
+                  "use": "领巾"
+                },
+                {
+                  "hex": "#C9A227",
+                  "use": "钥匙"
+                },
+                {
+                  "hex": "#FFC46B",
+                  "use": "灯笼光"
+                }
+              ]
+            }
+          ]
+        },
+        "sumi": {
+          "name": "墨 / Sumi",
+          "subtitle": "招领所守护猫灵 · 178cm · 7.5 头身",
+          "accent": "#4FBFB0",
+          "groups": [
+            {
+              "label": "头发 Hair",
+              "swatches": [
+                {
+                  "hex": "#23222A",
+                  "use": "底色"
+                },
+                {
+                  "hex": "#14131A",
+                  "use": "1 影"
+                },
+                {
+                  "hex": "#4A4956",
+                  "use": "冷高光"
+                },
+                {
+                  "hex": "#EDEDF2",
+                  "use": "挑染"
+                }
+              ]
+            },
+            {
+              "label": "瞳 Eye（异色）",
+              "swatches": [
+                {
+                  "hex": "#F0C24B",
+                  "use": "左·金"
+                },
+                {
+                  "hex": "#C08A1E",
+                  "use": "左·影"
+                },
+                {
+                  "hex": "#4FBFB0",
+                  "use": "右·青碧"
+                },
+                {
+                  "hex": "#2C8378",
+                  "use": "右·影"
+                }
+              ]
+            },
+            {
+              "label": "肤 Skin",
+              "swatches": [
+                {
+                  "hex": "#F2DCCB",
+                  "use": "底色"
+                },
+                {
+                  "hex": "#DBB6A2",
+                  "use": "1 影"
+                },
+                {
+                  "hex": "#C9A0B4",
+                  "use": "冷红晕"
+                }
+              ]
+            },
+            {
+              "label": "服装 Costume",
+              "swatches": [
+                {
+                  "hex": "#2E2C36",
+                  "use": "作务衣"
+                },
+                {
+                  "hex": "#1B1A21",
+                  "use": "1 影"
+                },
+                {
+                  "hex": "#545160",
+                  "use": "腰带"
+                }
+              ]
+            },
+            {
+              "label": "点缀 Accent",
+              "swatches": [
+                {
+                  "hex": "#7A6B8F",
+                  "use": "猫耳内侧"
+                },
+                {
+                  "hex": "#8FE3D6",
+                  "use": "灵纹光"
+                }
+              ]
+            }
+          ]
+        },
+        "sae": {
+          "name": "时雨 冴 / Shigure Sae",
+          "subtitle": "回收局第二课执行官 · 171cm · 7.8 头身",
+          "accent": "#C0272D",
+          "groups": [
+            {
+              "label": "头发 Hair",
+              "swatches": [
+                {
+                  "hex": "#E4E7EE",
+                  "use": "底色"
+                },
+                {
+                  "hex": "#B6BCCB",
+                  "use": "1 影"
+                },
+                {
+                  "hex": "#FFFFFF",
+                  "use": "高光"
+                }
+              ]
+            },
+            {
+              "label": "瞳 Eye",
+              "swatches": [
+                {
+                  "hex": "#7A6E96",
+                  "use": "底色"
+                },
+                {
+                  "hex": "#4E4468",
+                  "use": "1 影"
+                },
+                {
+                  "hex": "#E8E2F5",
+                  "use": "高光"
+                }
+              ]
+            },
+            {
+              "label": "肤 Skin",
+              "swatches": [
+                {
+                  "hex": "#F7E3D8",
+                  "use": "底色"
+                },
+                {
+                  "hex": "#E2BCAF",
+                  "use": "1 影"
+                },
+                {
+                  "hex": "#C9C3D8",
+                  "use": "眼下"
+                }
+              ]
+            },
+            {
+              "label": "服装 Costume",
+              "swatches": [
+                {
+                  "hex": "#D8DCE4",
+                  "use": "大衣"
+                },
+                {
+                  "hex": "#A8AEBD",
+                  "use": "大衣影"
+                },
+                {
+                  "hex": "#2B2E38",
+                  "use": "内衬/裤"
+                },
+                {
+                  "hex": "#1A1C24",
+                  "use": "内衬影"
+                },
+                {
+                  "hex": "#C7CCD6",
+                  "use": "银扣"
+                }
+              ]
+            },
+            {
+              "label": "点缀 Accent（红色配额）",
+              "swatches": [
+                {
+                  "hex": "#C0272D",
+                  "use": "臂章·唯一红"
+                },
+                {
+                  "hex": "#1E2028",
+                  "use": "伞枪「時雨」"
+                }
+              ]
+            }
+          ]
+        },
+        "shinobu": {
+          "name": "帆坂 忍 / Hosaka Shinobu",
+          "subtitle": "滞留 10 年的孩童灵 · 142cm · 5.5 头身",
+          "accent": "#F5C93F",
+          "groups": [
+            {
+              "label": "头发 Hair",
+              "swatches": [
+                {
+                  "hex": "#F0B77E",
+                  "use": "底色"
+                },
+                {
+                  "hex": "#C98C56",
+                  "use": "1 影"
+                },
+                {
+                  "hex": "#FFD9AC",
+                  "use": "高光"
+                }
+              ]
+            },
+            {
+              "label": "瞳 Eye",
+              "swatches": [
+                {
+                  "hex": "#6ABF5A",
+                  "use": "底色"
+                },
+                {
+                  "hex": "#3F8C3A",
+                  "use": "1 影"
+                },
+                {
+                  "hex": "#FFFFFF",
+                  "use": "大高光"
+                }
+              ]
+            },
+            {
+              "label": "肤 Skin",
+              "swatches": [
+                {
+                  "hex": "#FCE3D2",
+                  "use": "底色"
+                },
+                {
+                  "hex": "#EFC0AB",
+                  "use": "1 影"
+                },
+                {
+                  "hex": "#F5A08C",
+                  "use": "红晕"
+                }
+              ]
+            },
+            {
+              "label": "服装 Costume",
+              "swatches": [
+                {
+                  "hex": "#F5C93F",
+                  "use": "雨衣"
+                },
+                {
+                  "hex": "#D19E1E",
+                  "use": "雨衣影"
+                },
+                {
+                  "hex": "#6B4A32",
+                  "use": "短裤"
+                },
+                {
+                  "hex": "#8B6239",
+                  "use": "书包"
+                },
+                {
+                  "hex": "#D9534F",
+                  "use": "雨靴"
+                }
+              ]
+            },
+            {
+              "label": "点缀 Accent",
+              "swatches": [
+                {
+                  "hex": "#CFEAF2",
+                  "use": "灵体雾 60%"
+                },
+                {
+                  "hex": "#EBD9C2",
+                  "use": "创可贴"
+                }
+              ]
+            }
+          ]
+        }
       },
-      {
-        "label": "瞳 Eye",
-        "swatches": [
-          { "hex": "#F2A83B", "use": "底色" },
-          { "hex": "#C4761E", "use": "1 影" },
-          { "hex": "#FFF3D6", "use": "高光" }
-        ]
-      },
-      {
-        "label": "肤 Skin",
-        "swatches": [
-          { "hex": "#FBE0CE", "use": "底色" },
-          { "hex": "#EFBDA4", "use": "1 影" },
-          { "hex": "#F2A78F", "use": "红晕" }
-        ]
-      },
-      {
-        "label": "服装 Costume",
-        "swatches": [
-          { "hex": "#2C3E63", "use": "制服" },
-          { "hex": "#1C2845", "use": "制服影" },
-          { "hex": "#35547E", "use": "半纏" },
-          { "hex": "#22395A", "use": "半纏影" },
-          { "hex": "#F2F5F8", "use": "家纹" }
-        ]
-      },
-      {
-        "label": "点缀 Accent",
-        "swatches": [
-          { "hex": "#D64545", "use": "领巾" },
-          { "hex": "#C9A227", "use": "钥匙" },
-          { "hex": "#FFC46B", "use": "灯笼光" }
-        ]
+      "proportions_note": "刻度为 10 cm 一格。图形为比例参考用示意剪影，非最终设定稿。",
+      "proportions": [
+        {
+          "name": "帆坂 忍",
+          "height_cm": 142,
+          "heads": 5.5,
+          "color": "#F5C93F",
+          "silhouette": "雨衣尖帽"
+        },
+        {
+          "name": "天野 灯莉",
+          "height_cm": 156,
+          "heads": 6.8,
+          "color": "#E8703A",
+          "silhouette": "半纏 + 呆毛"
+        },
+        {
+          "name": "墨",
+          "height_cm": 178,
+          "heads": 7.5,
+          "color": "#23222A",
+          "silhouette": "猫耳 + 尾巴"
+        },
+        {
+          "name": "时雨 冴",
+          "height_cm": 171,
+          "heads": 7.8,
+          "color": "#D8DCE4",
+          "silhouette": "高马尾 + 大衣"
+        }
+      ]
+    },
+    "icarus": {
+      "title": "《黄昏之羽》",
+      "medium": "日式幻想 RPG 手游",
+      "characters": {
+        "icarus": {
+          "name": "伊卡洛斯 / Icarus",
+          "subtitle": "第七位羽者「黄昏之羽」 · 168cm · 8.0 头身",
+          "accent": "#4FD8F5",
+          "groups": [
+            {
+              "label": "头发 Hair",
+              "swatches": [
+                { "hex": "#F2AEC4", "use": "底色·玫粉" },
+                { "hex": "#D683A4", "use": "1 影" },
+                { "hex": "#FFD9E6", "use": "高光" }
+              ]
+            },
+            {
+              "label": "瞳 Eye",
+              "swatches": [
+                { "hex": "#A98BD8", "use": "底色·紫罗兰" },
+                { "hex": "#7C5FB0", "use": "1 影" },
+                { "hex": "#6E5A8C", "use": "睫毛" },
+                { "hex": "#FFFFFF", "use": "高光" }
+              ]
+            },
+            {
+              "label": "肤 Skin",
+              "swatches": [
+                { "hex": "#FBEDE4", "use": "底色" },
+                { "hex": "#EFD0C4", "use": "1 影" },
+                { "hex": "#F3B3B0", "use": "红晕" }
+              ]
+            },
+            {
+              "label": "礼装 Costume",
+              "swatches": [
+                { "hex": "#F6F0E6", "use": "象牙白" },
+                { "hex": "#DED4C4", "use": "1 影" },
+                { "hex": "#FDFAF6", "use": "珍珠白" },
+                { "hex": "#CBBBE6", "use": "薰衣草薄纱" },
+                { "hex": "#A895CE", "use": "薄纱影" }
+              ]
+            },
+            {
+              "label": "羽翼 Wings（渐变顺序）",
+              "swatches": [
+                { "hex": "#FDFAF6", "use": "根部·纯白" },
+                { "hex": "#BFE3F2", "use": "中段·淡蓝" },
+                { "hex": "#CBBBE6", "use": "外段·淡紫" },
+                { "hex": "#FFB6CE", "use": "边缘·玫粉" },
+                { "hex": "#9FB9D4", "use": "羽影" }
+              ]
+            },
+            {
+              "label": "魔法宝石 Gem（唯一高饱和色）",
+              "swatches": [
+                { "hex": "#4FD8F5", "use": "宝石本体" },
+                { "hex": "#2AA6C9", "use": "宝石影" },
+                { "hex": "#E8FEFF", "use": "核心高光" },
+                { "hex": "#7FE9FF", "use": "外辉" }
+              ]
+            },
+            {
+              "label": "银饰与光轮 Silver",
+              "swatches": [
+                { "hex": "#DCD8E2", "use": "底色" },
+                { "hex": "#ABA6B8", "use": "1 影" },
+                { "hex": "#FFFFFF", "use": "高光" }
+              ]
+            }
+          ]
+        }
       }
-    ]
-  },
-  "sumi": {
-    "name": "墨 / Sumi",
-    "subtitle": "招领所守护猫灵 · 178cm · 7.5 头身",
-    "accent": "#4FBFB0",
-    "groups": [
-      {
-        "label": "头发 Hair",
-        "swatches": [
-          { "hex": "#23222A", "use": "底色" },
-          { "hex": "#14131A", "use": "1 影" },
-          { "hex": "#4A4956", "use": "冷高光" },
-          { "hex": "#EDEDF2", "use": "挑染" }
-        ]
-      },
-      {
-        "label": "瞳 Eye（异色）",
-        "swatches": [
-          { "hex": "#F0C24B", "use": "左·金" },
-          { "hex": "#C08A1E", "use": "左·影" },
-          { "hex": "#4FBFB0", "use": "右·青碧" },
-          { "hex": "#2C8378", "use": "右·影" }
-        ]
-      },
-      {
-        "label": "肤 Skin",
-        "swatches": [
-          { "hex": "#F2DCCB", "use": "底色" },
-          { "hex": "#DBB6A2", "use": "1 影" },
-          { "hex": "#C9A0B4", "use": "冷红晕" }
-        ]
-      },
-      {
-        "label": "服装 Costume",
-        "swatches": [
-          { "hex": "#2E2C36", "use": "作务衣" },
-          { "hex": "#1B1A21", "use": "1 影" },
-          { "hex": "#545160", "use": "腰带" }
-        ]
-      },
-      {
-        "label": "点缀 Accent",
-        "swatches": [
-          { "hex": "#7A6B8F", "use": "猫耳内侧" },
-          { "hex": "#8FE3D6", "use": "灵纹光" }
-        ]
-      }
-    ]
-  },
-  "sae": {
-    "name": "时雨 冴 / Shigure Sae",
-    "subtitle": "回收局第二课执行官 · 171cm · 7.8 头身",
-    "accent": "#C0272D",
-    "groups": [
-      {
-        "label": "头发 Hair",
-        "swatches": [
-          { "hex": "#E4E7EE", "use": "底色" },
-          { "hex": "#B6BCCB", "use": "1 影" },
-          { "hex": "#FFFFFF", "use": "高光" }
-        ]
-      },
-      {
-        "label": "瞳 Eye",
-        "swatches": [
-          { "hex": "#7A6E96", "use": "底色" },
-          { "hex": "#4E4468", "use": "1 影" },
-          { "hex": "#E8E2F5", "use": "高光" }
-        ]
-      },
-      {
-        "label": "肤 Skin",
-        "swatches": [
-          { "hex": "#F7E3D8", "use": "底色" },
-          { "hex": "#E2BCAF", "use": "1 影" },
-          { "hex": "#C9C3D8", "use": "眼下" }
-        ]
-      },
-      {
-        "label": "服装 Costume",
-        "swatches": [
-          { "hex": "#D8DCE4", "use": "大衣" },
-          { "hex": "#A8AEBD", "use": "大衣影" },
-          { "hex": "#2B2E38", "use": "内衬/裤" },
-          { "hex": "#1A1C24", "use": "内衬影" },
-          { "hex": "#C7CCD6", "use": "银扣" }
-        ]
-      },
-      {
-        "label": "点缀 Accent（红色配额）",
-        "swatches": [
-          { "hex": "#C0272D", "use": "臂章·唯一红" },
-          { "hex": "#1E2028", "use": "伞枪「時雨」" }
-        ]
-      }
-    ]
-  },
-  "shinobu": {
-    "name": "帆坂 忍 / Hosaka Shinobu",
-    "subtitle": "滞留 10 年的孩童灵 · 142cm · 5.5 头身",
-    "accent": "#F5C93F",
-    "groups": [
-      {
-        "label": "头发 Hair",
-        "swatches": [
-          { "hex": "#F0B77E", "use": "底色" },
-          { "hex": "#C98C56", "use": "1 影" },
-          { "hex": "#FFD9AC", "use": "高光" }
-        ]
-      },
-      {
-        "label": "瞳 Eye",
-        "swatches": [
-          { "hex": "#6ABF5A", "use": "底色" },
-          { "hex": "#3F8C3A", "use": "1 影" },
-          { "hex": "#FFFFFF", "use": "大高光" }
-        ]
-      },
-      {
-        "label": "肤 Skin",
-        "swatches": [
-          { "hex": "#FCE3D2", "use": "底色" },
-          { "hex": "#EFC0AB", "use": "1 影" },
-          { "hex": "#F5A08C", "use": "红晕" }
-        ]
-      },
-      {
-        "label": "服装 Costume",
-        "swatches": [
-          { "hex": "#F5C93F", "use": "雨衣" },
-          { "hex": "#D19E1E", "use": "雨衣影" },
-          { "hex": "#6B4A32", "use": "短裤" },
-          { "hex": "#8B6239", "use": "书包" },
-          { "hex": "#D9534F", "use": "雨靴" }
-        ]
-      },
-      {
-        "label": "点缀 Accent",
-        "swatches": [
-          { "hex": "#CFEAF2", "use": "灵体雾 60%" },
-          { "hex": "#EBD9C2", "use": "创可贴" }
-        ]
-      }
-    ]
+    }
   }
 }

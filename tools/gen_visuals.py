@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""从 palettes.json 生成角色配色卡与头身比对照图的 SVG。
+"""从 palettes.json 生成各企划的角色配色卡与头身比对照图 SVG。
 
 用法:
     python3 tools/gen_visuals.py
 输出:
-    assets/palettes/<id>.svg
-    assets/proportions.svg
+    assets/<企划 id>/palettes/<角色 id>.svg
+    assets/<企划 id>/proportions.svg   （仅当该企划定义了 proportions）
 """
 
 from __future__ import annotations
@@ -15,7 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SPEC = ROOT / "tools" / "palettes.json"
-PALETTE_DIR = ROOT / "assets" / "palettes"
+ASSET_DIR = ROOT / "assets"
 
 FONT = (
     "'Hiragino Sans','Noto Sans CJK SC','Noto Sans SC','Source Han Sans SC',"
@@ -102,22 +102,14 @@ def palette_svg(spec: dict) -> str:
 
 # --- 头身比对照图 ---------------------------------------------------------
 
-FIGURES = [
-    # id, 名字, 身高cm, 头身比, 主色, 剪影识别点
-    ("shinobu", "帆坂 忍", 142, 5.5, "#F5C93F", "雨衣尖帽"),
-    ("akari", "天野 灯莉", 156, 6.8, "#E8703A", "半纏 + 呆毛"),
-    ("sumi", "墨", 178, 7.5, "#23222A", "猫耳 + 尾巴"),
-    ("sae", "时雨 冴", 171, 7.8, "#D8DCE4", "高马尾 + 大衣"),
-]
-
-
-def proportions_svg() -> str:
+def proportions_svg(figures: list[dict], subtitle: str) -> str:
+    """figures 每项含 name / height_cm / heads / color / silhouette。"""
     width, height = 900, 620
     base_y = 500          # 地面线
     top_y = 90            # 最高角色的头顶
-    tallest = max(f[2] for f in FIGURES)
+    tallest = max(f["height_cm"] for f in figures)
     scale = (base_y - top_y) / tallest   # px per cm
-    col_w = (width - 230) / len(FIGURES)
+    col_w = (width - 230) / len(figures)
 
     out = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
@@ -126,7 +118,7 @@ def proportions_svg() -> str:
         f'<text x="40" y="46" font-family="{FONT}" font-size="22" font-weight="700" '
         f'fill="{INK}">头身比对照 / PROPORTION CHART</text>',
         f'<text x="40" y="68" font-family="{FONT}" font-size="12" fill="{MUTED}">'
-        f'刻度为 10 cm 一格。图形为比例参考用示意剪影，非最终设定稿。</text>',
+        f'{esc(subtitle)}</text>',
     ]
 
     # 高度刻度
@@ -148,7 +140,12 @@ def proportions_svg() -> str:
         f'stroke="{INK}" stroke-width="2"/>'
     )
 
-    for idx, (cid, name, cm, heads, color, silhouette) in enumerate(FIGURES):
+    for idx, fig in enumerate(figures):
+        name = fig["name"]
+        cm = fig["height_cm"]
+        heads = fig["heads"]
+        color = fig["color"]
+        silhouette = fig["silhouette"]
         cx = 190 + idx * col_w
         total = cm * scale
         head_h = total / heads          # 一"头"的长度
@@ -207,7 +204,8 @@ def proportions_svg() -> str:
 
         out.append(
             f'<text x="{cx:.1f}" y="{base_y + 24}" text-anchor="middle" '
-            f'font-family="{FONT}" font-size="14" font-weight="700" fill="{INK}">{name}</text>'
+            f'font-family="{FONT}" font-size="14" font-weight="700" fill="{INK}">'
+            f'{esc(name)}</text>'
         )
         out.append(
             f'<text x="{cx:.1f}" y="{base_y + 44}" text-anchor="middle" '
@@ -215,7 +213,8 @@ def proportions_svg() -> str:
         )
         out.append(
             f'<text x="{cx:.1f}" y="{base_y + 64}" text-anchor="middle" '
-            f'font-family="{FONT}" font-size="11" fill="{MUTED}">剪影：{silhouette}</text>'
+            f'font-family="{FONT}" font-size="11" fill="{MUTED}">'
+            f'剪影：{esc(silhouette)}</text>'
         )
 
     out.append("</svg>")
@@ -224,15 +223,24 @@ def proportions_svg() -> str:
 
 def main() -> None:
     spec = json.loads(SPEC.read_text(encoding="utf-8"))
-    PALETTE_DIR.mkdir(parents=True, exist_ok=True)
-    for cid, data in spec.items():
-        path = PALETTE_DIR / f"{cid}.svg"
-        path.write_text(palette_svg(data), encoding="utf-8")
-        print(f"wrote {path.relative_to(ROOT)}")
 
-    prop = ROOT / "assets" / "proportions.svg"
-    prop.write_text(proportions_svg(), encoding="utf-8")
-    print(f"wrote {prop.relative_to(ROOT)}")
+    for work_id, work in spec["works"].items():
+        palette_dir = ASSET_DIR / work_id / "palettes"
+        palette_dir.mkdir(parents=True, exist_ok=True)
+        for cid, data in work["characters"].items():
+            path = palette_dir / f"{cid}.svg"
+            path.write_text(palette_svg(data), encoding="utf-8")
+            print(f"wrote {path.relative_to(ROOT)}")
+
+        figures = work.get("proportions")
+        if figures:
+            subtitle = work.get(
+                "proportions_note",
+                "刻度为 10 cm 一格。图形为比例参考用示意剪影，非最终设定稿。",
+            )
+            path = ASSET_DIR / work_id / "proportions.svg"
+            path.write_text(proportions_svg(figures, subtitle), encoding="utf-8")
+            print(f"wrote {path.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":
