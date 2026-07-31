@@ -232,9 +232,11 @@ def reskin(concept: Concept, outfit: Outfit, seed: int, backend_name: str,
         if i == 0:
             # 洗白后贴图上只剩描边是深色的，先清掉孤立描边点，
             # 否则最后的邻域扩散会把整块布料染灰。
+            cleaned = 0
             for name, slot_id in ids.items():
                 if slot_id != OCCLUDER_ID and name in textures:
-                    writeback.clean_outliner(textures[name])
+                    cleaned += writeback.clean_outliner(textures[name], written[name])
+            log(f"      清理孤立描边像素 {cleaned} 个")
 
     flooded = 0
     for name, slot_id in ids.items():

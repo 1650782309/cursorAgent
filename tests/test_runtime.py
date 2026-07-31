@@ -11,7 +11,7 @@ from spineforge.skeleton import build_bones, build_skeleton
 
 @pytest.fixture(scope="module")
 def concept():
-    return load_concept("aria_mage")
+    return load_concept("akari")
 
 
 @pytest.fixture(scope="module")
@@ -50,9 +50,9 @@ def test_attachment_quad_follows_its_bone(concept, skeleton):
     skeleton.pose("wave", 0.9)
     waving = {q.slot: q.corners.mean(axis=0) for q in skeleton.quads()}
     # 挥手时右臂抬起，右袖子必须跟着往上走（画布 y 减小）
-    assert waving["R_sleeve"][1] < rest["R_sleeve"][1] - 5
+    assert waving["hanten_sleeve_r"][1] < rest["hanten_sleeve_r"][1] - 5
     # 左腿没有参与，位置基本不动
-    assert abs(waving["L_thigh"][1] - rest["L_thigh"][1]) < 1.0
+    assert abs(waving["L_sock"][1] - rest["L_sock"][1]) < 1.0
     skeleton.pose()
 
 

@@ -241,11 +241,14 @@ def flood_unwritten(texture: np.ndarray, written: np.ndarray,
     return filled_total
 
 
-def clean_outliner(texture: np.ndarray) -> None:
-    """清掉孤立的描边像素。
+def clean_outliner(texture: np.ndarray, written: np.ndarray | None = None) -> int:
+    """清掉孤立的描边像素，返回清掉的数量。
 
     洗白之后贴图上只剩描边是有颜色的，这些孤立深色点会污染后面的邻域扩散，
     把整块布料染灰。原实现在第一帧回写后同样先做这一步。
+
+    被刷白的纹素要同时退回"未写入"状态。否则它们顶着"已写入"的标记留在贴图上，
+    收尾的邻域扩散不会碰它们，贴图上就留下一圈白边。
     """
     rgb = texture[..., :3]
     alpha = texture[..., 3]
@@ -258,6 +261,9 @@ def clean_outliner(texture: np.ndarray) -> None:
             neighbors += np.roll(not_white, (dy, dx), axis=(0, 1)).astype(np.int32)
     isolated = not_white & (neighbors < 8)
     texture[isolated, 0:3] = 255
+    if written is not None:
+        written[isolated & (written == WRITTEN)] = NOT_WRITTEN
+    return int(np.count_nonzero(isolated))
 
 
 def initial_written(texture: np.ndarray, low_alpha_threshold: int) -> np.ndarray:

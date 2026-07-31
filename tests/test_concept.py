@@ -24,15 +24,47 @@ def minimal() -> dict:
 
 def test_all_bundled_concepts_parse():
     concepts = list_concepts()
-    assert {c.id for c in concepts} == {"aria_mage", "gale_ranger", "nox_knight"}
+    assert {c.id for c in concepts} == {"akari", "sumi", "sae", "shinobu", "icarus"}
     for c in concepts:
         assert c.parts and c.animations and c.outfits
+        # 每个角色都必须挂在设定集上，配色不许在概念文件里另写一套
+        assert c.bible is not None
 
 
 def test_pixel_size_derived_from_unit():
     c = parse_concept(minimal())
-    # size 4x8 单位 * unit 2.0 + 两侧各 2px 留白
+    # size 4x8 头长 * unit 2.0 + 两侧各 2px 留白
     assert c.part("body").pixel_size == (12, 20)
+
+
+def test_size_can_reference_bone_lengths():
+    data = minimal()
+    data["parts"][0]["size"] = [0.5, "thigh"]
+    data["parts"][0]["offset"] = [0, "thigh*0.5"]
+    c = parse_concept(data)
+    assert c.part("body").size[1] == 5.0        # rig.thigh
+    assert c.part("body").offset[1] == 2.5
+
+
+def test_size_expression_can_add_terms():
+    data = minimal()
+    data["parts"][0]["size"] = [0.5, "torso+chest*0.5"]
+    c = parse_concept(data)
+    assert c.part("body").size[1] == 4.0 + 4.0 * 0.5
+
+
+def test_unknown_bone_length_in_expression_is_rejected():
+    data = minimal()
+    data["parts"][0]["size"] = [0.5, "shoulder"]
+    with pytest.raises(ConceptError, match="未知的骨骼长度"):
+        parse_concept(data)
+
+
+def test_concept_without_palette_or_bible_is_rejected():
+    data = minimal()
+    del data["palette"]
+    with pytest.raises(ConceptError, match="bible 引用或 palette"):
+        parse_concept(data)
 
 
 def test_draw_order_is_by_order_field():
@@ -79,6 +111,6 @@ def test_schema_doc_covers_every_top_level_field(tmp_path):
     from pathlib import Path
 
     doc = Path("concepts/_schema.md").read_text(encoding="utf-8")
-    raw = yaml.safe_load(Path("concepts/aria_mage.yaml").read_text(encoding="utf-8"))
+    raw = yaml.safe_load(Path("concepts/akari.yaml").read_text(encoding="utf-8"))
     for key in raw:
         assert f"`{key}`" in doc, f"_schema.md 没有描述字段 {key}"

@@ -22,7 +22,7 @@ def built(tmp_path_factory):
     # 关键姿势扫描是整套测试里最慢的一步，采样放粗、轮次减少
     cfg.keypose_sample_step = 0.25
     cfg.keypose_max_count = 4
-    concept = load_concept("gale_ranger", cfg)
+    concept = load_concept("sae", cfg)
     pipeline.build(concept, cfg)
     return concept, cfg
 
@@ -58,7 +58,7 @@ def test_every_part_is_visible_in_rest_pose(built):
 
 def test_preprocess_selects_poses_and_reports_coverage(built):
     concept, cfg = built
-    outfit = concept.outfit("frost_scout")
+    outfit = concept.outfit("combat_suit")
     manifest = pipeline.preprocess(concept, outfit, cfg)
 
     sequence = manifest["sequence"]
@@ -78,7 +78,7 @@ def test_preprocess_selects_poses_and_reports_coverage(built):
 
 def test_ids_cover_redraw_parts_and_occlude_the_rest(built):
     concept, cfg = built
-    outfit = concept.outfit("frost_scout")
+    outfit = concept.outfit("combat_suit")
     manifest = pipeline.ensure_preprocess(concept, outfit, cfg)
     ids = manifest["ids"]
 
@@ -87,11 +87,13 @@ def test_ids_cover_redraw_parts_and_occlude_the_rest(built):
     assert len(set(ids[n] for n in redraw)) == len(redraw)  # ID 不能撞
     # 脸和头发必须是遮挡体，不然会被 SD 改掉
     assert ids["head_base"] == 0 and ids["front_hair"] == 0
+    # 冴的配色纪律：全身只允许一处红（臂章），所以它也必须锁死
+    assert ids["red_armband"] == 0
 
 
 def test_reskin_repaints_cloth_and_leaves_the_face_alone(built):
     concept, cfg = built
-    outfit = concept.outfit("frost_scout")
+    outfit = concept.outfit("combat_suit")
     before = pipeline.load_textures(cfg.images_dir(concept.id))
 
     result = pipeline.reskin(concept, outfit, seed=7, backend_name="mock",
@@ -101,10 +103,10 @@ def test_reskin_repaints_cloth_and_leaves_the_face_alone(built):
     assert result.written_texels > 0
     assert set(after) == set(before)
     # 保形部件必须逐像素不变
-    for name in ("head_base", "front_hair", "L_hand"):
+    for name in ("head_base", "front_hair", "red_armband"):
         assert np.array_equal(after[name], before[name])
     # 衣服部件必须整体换色，且不留白洞
-    for name in ("body_cloth", "L_sleeve", "skirt"):
+    for name in ("coat_body", "coat_sleeve_l", "coat_skirt"):
         assert not np.array_equal(after[name], before[name])
         opaque = after[name][..., 3] > 5
         still_white = (after[name][..., 0:3] == 255).all(axis=-1) & opaque
@@ -116,7 +118,7 @@ def test_reskin_repaints_cloth_and_leaves_the_face_alone(built):
 
 def test_reskin_is_deterministic_for_a_given_seed(built):
     concept, cfg = built
-    outfit = concept.outfit("desert_nomad")
+    outfit = concept.outfit("grey_turtleneck")
     a = pipeline.reskin(concept, outfit, seed=3, backend_name="mock", cfg=cfg,
                         keep_steps=False)
     tex_a = pipeline.load_textures(a.out_dir / "images")
@@ -129,12 +131,12 @@ def test_reskin_is_deterministic_for_a_given_seed(built):
 
 def test_different_outfits_produce_different_skins(built):
     concept, cfg = built
-    frost = pipeline.reskin(concept, concept.outfit("frost_scout"), seed=5,
-                            backend_name="mock", cfg=cfg, keep_steps=False)
-    desert = pipeline.reskin(concept, concept.outfit("desert_nomad"), seed=5,
+    combat = pipeline.reskin(concept, concept.outfit("combat_suit"), seed=5,
                              backend_name="mock", cfg=cfg, keep_steps=False)
-    a = pipeline.load_textures(frost.out_dir / "images")["body_cloth"]
-    b = pipeline.load_textures(desert.out_dir / "images")["body_cloth"]
+    casual = pipeline.reskin(concept, concept.outfit("grey_turtleneck"), seed=5,
+                             backend_name="mock", cfg=cfg, keep_steps=False)
+    a = pipeline.load_textures(combat.out_dir / "images")["coat_body"]
+    b = pipeline.load_textures(casual.out_dir / "images")["coat_body"]
     assert not np.array_equal(a, b)
 
 

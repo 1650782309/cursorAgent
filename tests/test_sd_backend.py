@@ -38,12 +38,12 @@ def make_request(seed: int = 1) -> RedrawRequest:
 
 @pytest.fixture(scope="module")
 def concept():
-    return load_concept("aria_mage")
+    return load_concept("akari")
 
 
 # ----------------------------------------------------------------- mock 后端
 def test_mock_only_touches_the_masked_region(concept):
-    backend = MockBackend(concept, concept.outfit("starlight_robe"))
+    backend = MockBackend(concept, concept.outfit("field_work"))
     req = make_request()
     out = np.asarray(backend.redraw(req))
     src = np.asarray(req.image)
@@ -55,7 +55,7 @@ def test_mock_only_touches_the_masked_region(concept):
 
 
 def test_mock_is_seed_deterministic(concept):
-    backend = MockBackend(concept, concept.outfit("starlight_robe"))
+    backend = MockBackend(concept, concept.outfit("field_work"))
     a = np.asarray(backend.redraw(make_request(seed=4)))
     b = np.asarray(backend.redraw(make_request(seed=4)))
     c = np.asarray(backend.redraw(make_request(seed=5)))
@@ -64,7 +64,7 @@ def test_mock_is_seed_deterministic(concept):
 
 
 def test_mock_handles_an_empty_mask(concept):
-    backend = MockBackend(concept, concept.outfit("starlight_robe"))
+    backend = MockBackend(concept, concept.outfit("field_work"))
     req = make_request()
     req.mask = Image.new("L", SIZE, 0)
     assert np.array_equal(np.asarray(backend.redraw(req)), np.asarray(req.image))
@@ -148,8 +148,8 @@ def test_webui_payload_keeps_the_settings_that_matter(fake_webui):
 def test_webui_backend_selected_by_name(fake_webui, concept):
     cfg = Config()
     cfg.sd_host, cfg.sd_port = "127.0.0.1", fake_webui.server_address[1]
-    backend = get_backend("webui", concept, concept.outfit("starlight_robe"), cfg)
+    backend = get_backend("webui", concept, concept.outfit("field_work"), cfg)
     assert backend.name == "webui"
-    assert get_backend("mock", concept, concept.outfit("starlight_robe"), cfg).name == "mock"
+    assert get_backend("mock", concept, concept.outfit("field_work"), cfg).name == "mock"
     with pytest.raises(ValueError, match="未知重绘后端"):
-        get_backend("nope", concept, concept.outfit("starlight_robe"), cfg)
+        get_backend("nope", concept, concept.outfit("field_work"), cfg)

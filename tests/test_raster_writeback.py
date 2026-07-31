@@ -160,6 +160,26 @@ def test_flood_fills_untouched_texels():
     assert (written != NOT_WRITTEN).all()
 
 
+def test_cleaned_outliner_pixels_go_back_to_unwritten():
+    """被刷白的孤立描边必须退回"未写入"，否则收尾的邻域扩散补不到它们。"""
+    from spineforge.writeback import clean_outliner
+
+    # 洗白后的贴图是纯白的，只剩描边有颜色
+    tex = solid(9, (255, 255, 255))
+    tex[4, 4, 0:3] = (20, 20, 20)      # 一个孤立的深色描边点
+    written = np.full((9, 9), WRITTEN, dtype=np.uint8)
+
+    assert clean_outliner(tex, written) == 1
+    assert tuple(tex[4, 4, 0:3]) == (255, 255, 255)
+    assert written[4, 4] == NOT_WRITTEN
+    assert (written[written != NOT_WRITTEN] == WRITTEN).all()
+
+    # 退回未写入之后，扩散能把它填上邻居的颜色
+    tex[4, 5, 0:3] = (10, 120, 200)
+    flood_unwritten(tex, written)
+    assert tuple(tex[4, 4, 0:3]) != (255, 255, 255)
+
+
 def test_mask_and_edges_derive_from_ids(setup):
     sk, _, states, ids = setup
     uv = render_uv(sk, states, ids, CANVAS, CANVAS)
